@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-slate-200 font-sans tracking-tight antialiased selection:bg-ai-blue/30;
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-surface/50 backdrop-blur-xl border border-border shadow-2xl;
+  }
+  .glass-header {
+    @apply bg-background/70 backdrop-blur-2xl border-b border-border;
+  }
+}
