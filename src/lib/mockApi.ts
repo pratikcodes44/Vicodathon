@@ -15,7 +15,7 @@ export interface InterviewResponse {
 let currentTurn = 0;
 
 export const mockApi = {
-  async postInterview(userMessage: string): Promise<InterviewResponse> {
+  async postInterview(_userMessage: string): Promise<InterviewResponse> {
     // Simulate network latency
     await new Promise(resolve => setTimeout(resolve, 800));
 
