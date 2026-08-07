@@ -36,10 +36,10 @@ export function ChatFeed({ messages, isTyping }: ChatFeedProps) {
           >
             <div
               className={cn(
-                "max-w-[85%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed shadow-sm",
+                "max-w-[85%] rounded-3xl p-4 text-[14px] leading-relaxed shadow-sm",
                 msg.role === "agent"
-                  ? "bg-gradient-to-br from-surface to-slate-900 border border-ai-blue/20 text-slate-200 rounded-tl-sm"
-                  : "bg-ai-blue/10 border border-ai-blue/30 text-ai-blue rounded-tr-sm"
+                  ? "bg-gradient-to-br from-surface to-slate-900 border border-ai-blue/20 text-slate-200 rounded-bl-sm"
+                  : "bg-ai-blue/10 border border-ai-blue/30 text-white rounded-br-sm"
               )}
             >
               {msg.text}
@@ -52,7 +52,7 @@ export function ChatFeed({ messages, isTyping }: ChatFeedProps) {
             animate={{ opacity: 1, y: 0 }}
             className="flex w-full justify-start"
           >
-            <div className="max-w-[85%] rounded-2xl bg-surface border border-border px-4 py-4 text-[14px] text-slate-400 rounded-tl-sm flex items-center gap-1.5 shadow-sm">
+            <div className="max-w-[85%] rounded-3xl bg-surface border border-border p-4 text-[14px] text-slate-400 rounded-bl-sm flex items-center gap-1.5 shadow-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: "0ms" }}></span>
               <span className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: "150ms" }}></span>
               <span className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: "300ms" }}></span>
