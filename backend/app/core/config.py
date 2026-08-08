@@ -51,11 +51,23 @@ TOTAL_CURRICULUM_DAYS = 31
 
 
 # ---------------------------------------------------------------------------
-# LLM settings
+# LLM settings — multi-provider
 # ---------------------------------------------------------------------------
 
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")  # groq | openai | gemini | fallback
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+
+# Model names per provider
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+
+# Legacy alias
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini")
+
 LLM_TEMPERATURE_EVAL = 0.1       # Low for evaluation/feedback
 LLM_TEMPERATURE_QUESTION = 0.5   # Modest for question wording
 LLM_TEMPERATURE_FEEDBACK = 0.2   # Low for feedback composition

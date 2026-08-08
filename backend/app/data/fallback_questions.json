@@ -881,5 +881,131 @@
         "Multi-stage retrieval (vector search + reranking) adds ~100ms latency but significantly improves answer accuracy"
       ]
     }
+  },
+  {
+    "day": 16,
+    "difficulty": "FOUNDATION",
+    "question_text": "What are the key principles of RESTful API design, and why are they important for AI services?",
+    "rubric": {
+      "key_concepts": ["REST principles", "statelessness", "resource-oriented design", "HTTP methods"],
+      "expected_depth": "Should explain core REST constraints and their relevance to scalable AI service endpoints.",
+      "example_answer_points": [
+        "REST uses HTTP methods (GET, POST, PUT, DELETE) mapped to CRUD operations",
+        "Statelessness means each request contains all information needed to process it",
+        "Resource-oriented URLs make APIs intuitive and predictable"
+      ]
+    }
+  },
+  {
+    "day": 16,
+    "difficulty": "FOUNDATION",
+    "question_text": "Explain the difference between synchronous and asynchronous API calls. When would you use each for an AI-powered endpoint?",
+    "rubric": {
+      "key_concepts": ["synchronous vs asynchronous", "blocking", "webhooks", "polling"],
+      "expected_depth": "Should compare sync/async patterns and justify when each is appropriate for AI workloads.",
+      "example_answer_points": [
+        "Synchronous calls block until a response is returned, suitable for fast inference",
+        "Asynchronous calls return immediately with a job ID, suitable for long-running model inference",
+        "Webhooks or polling can be used to retrieve async results"
+      ]
+    }
+  },
+  {
+    "day": 16,
+    "difficulty": "FOUNDATION",
+    "question_text": "What is the purpose of API versioning, and how would you implement it for a machine learning service?",
+    "rubric": {
+      "key_concepts": ["API versioning", "backward compatibility", "URL versioning", "header versioning"],
+      "expected_depth": "Should describe why versioning matters and common implementation strategies.",
+      "example_answer_points": [
+        "Versioning prevents breaking changes from affecting existing consumers",
+        "URL path versioning (e.g., /v1/predict) is the most common approach",
+        "Model version and API version may evolve independently"
+      ]
+    }
+  },
+  {
+    "day": 16,
+    "difficulty": "APPLIED",
+    "question_text": "How would you design a FastAPI endpoint that accepts an image file and returns predictions from a computer vision model? Walk through the request/response lifecycle.",
+    "rubric": {
+      "key_concepts": ["file upload", "FastAPI", "multipart form data", "response serialization"],
+      "expected_depth": "Should describe the full lifecycle including file handling, model inference, and structured response.",
+      "example_answer_points": [
+        "Use FastAPI's UploadFile for efficient streaming of large files",
+        "Validate file type and size before processing",
+        "Return predictions in a structured JSON response with confidence scores"
+      ]
+    }
+  },
+  {
+    "day": 16,
+    "difficulty": "APPLIED",
+    "question_text": "Describe how you would implement rate limiting and authentication for a public-facing AI inference API.",
+    "rubric": {
+      "key_concepts": ["rate limiting", "authentication", "API keys", "token bucket", "middleware"],
+      "expected_depth": "Should explain practical approaches to protecting AI endpoints from abuse.",
+      "example_answer_points": [
+        "API key authentication validates caller identity on each request",
+        "Rate limiting (e.g., token bucket algorithm) prevents resource exhaustion",
+        "FastAPI middleware or dependencies can enforce both transparently"
+      ]
+    }
+  },
+  {
+    "day": 16,
+    "difficulty": "APPLIED",
+    "question_text": "How do you handle long-running model inference in a web API without blocking the server? Describe your approach with a specific framework.",
+    "rubric": {
+      "key_concepts": ["background tasks", "async processing", "task queues", "Celery", "FastAPI BackgroundTasks"],
+      "expected_depth": "Should describe a concrete async processing pattern for expensive inference.",
+      "example_answer_points": [
+        "Use a task queue (Celery, RQ) to offload inference to worker processes",
+        "Return a 202 Accepted with a task ID for the client to poll",
+        "FastAPI BackgroundTasks works for lightweight post-response work"
+      ]
+    }
+  },
+  {
+    "day": 16,
+    "difficulty": "SYSTEMS",
+    "question_text": "Design a production API gateway for an AI platform that serves multiple models. How would you handle routing, load balancing, and model versioning?",
+    "rubric": {
+      "key_concepts": ["API gateway", "load balancing", "model routing", "canary deployments", "service mesh"],
+      "expected_depth": "Should describe a production-grade architecture with concrete technology choices.",
+      "example_answer_points": [
+        "An API gateway (e.g., Kong, Envoy) routes requests to appropriate model servers",
+        "Load balancing distributes inference across GPU-equipped replicas",
+        "Canary deployments allow gradual rollout of new model versions"
+      ]
+    }
+  },
+  {
+    "day": 16,
+    "difficulty": "SYSTEMS",
+    "question_text": "How would you design an API contract and error-handling strategy for a multi-tenant AI service that must maintain SLAs?",
+    "rubric": {
+      "key_concepts": ["SLA", "error handling", "circuit breaker", "multi-tenancy", "graceful degradation"],
+      "expected_depth": "Should describe enterprise-grade reliability patterns for AI services.",
+      "example_answer_points": [
+        "Define clear SLAs for latency (p99) and availability (99.9%)",
+        "Implement circuit breakers to prevent cascade failures",
+        "Return structured error responses with retry-after headers for rate-limited tenants"
+      ]
+    }
+  },
+  {
+    "day": 16,
+    "difficulty": "SYSTEMS",
+    "question_text": "Compare streaming vs batch API designs for a real-time NLP service. What trade-offs would you evaluate when choosing between them?",
+    "rubric": {
+      "key_concepts": ["streaming", "batch processing", "SSE", "WebSocket", "throughput vs latency"],
+      "expected_depth": "Should analyze architectural trade-offs between streaming and batch for NLP workloads.",
+      "example_answer_points": [
+        "Streaming (SSE/WebSocket) provides low-latency token-by-token output for chat interfaces",
+        "Batch APIs maximize throughput by amortizing overhead across multiple inputs",
+        "Streaming increases infrastructure complexity but improves perceived responsiveness"
+      ]
+    }
   }
 ]
