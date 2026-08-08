@@ -80,6 +80,7 @@ def _get_client_and_model(provider: str, response_model: type[BaseModel] | None 
         client = AsyncOpenAI(
             base_url="https://integrate.api.nvidia.com/v1",
             api_key=api_key,
+            timeout=30.0,
         )
         
         # Route models based on the required task (response_model type)
@@ -95,13 +96,17 @@ def _get_client_and_model(provider: str, response_model: type[BaseModel] | None 
         client = AsyncOpenAI(
             api_key=GROQ_API_KEY,
             base_url="https://api.groq.com/openai/v1",
+            timeout=30.0,
         )
         return client, GROQ_MODEL
 
     elif provider == "openai":
         if not OPENAI_API_KEY:
             raise ValueError("OPENAI_API_KEY not set")
-        client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+        client = AsyncOpenAI(
+            api_key=OPENAI_API_KEY,
+            timeout=30.0,
+        )
         return client, OPENAI_MODEL
 
     elif provider == "gemini":
@@ -110,6 +115,7 @@ def _get_client_and_model(provider: str, response_model: type[BaseModel] | None 
         client = AsyncOpenAI(
             api_key=GEMINI_API_KEY,
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            timeout=30.0,
         )
         return client, GEMINI_MODEL
 
@@ -125,6 +131,7 @@ async def _call_llm_structured(
     user_prompt: str,
     response_model: type[BaseModel],
     temperature: float = 0.2,
+    max_tokens: int | None = None,
 ) -> Optional[BaseModel]:
     """
     Attempt a structured-output LLM call across all configured providers.
@@ -155,6 +162,7 @@ async def _call_llm_structured(
                         ],
                         response_format=response_model,
                         temperature=temperature,
+                        max_tokens=max_tokens,
                     )
                     result = response.choices[0].message.parsed
                     if result is not None:
@@ -183,6 +191,7 @@ async def _call_llm_structured(
                             {"role": "user", "content": user_prompt},
                         ],
                         temperature=temperature,
+                        max_tokens=max_tokens,
                         response_format={"type": "json_object"},
                     )
                     
@@ -203,6 +212,7 @@ async def _call_llm_structured(
                         {"role": "user", "content": user_prompt},
                     ],
                     temperature=temperature,
+                    max_tokens=max_tokens,
                     response_format={"type": "json_object"},
                 )
                 raw_json = response.choices[0].message.content
@@ -266,6 +276,7 @@ Provide your evaluation as JSON with these fields:
         user_prompt=user_prompt,
         response_model=AnswerEvaluation,
         temperature=LLM_TEMPERATURE_EVAL,
+        max_tokens=300,
     )
     if result is not None:
         return result
@@ -342,6 +353,7 @@ Respond as JSON with:
         user_prompt=user_prompt,
         response_model=GeneratedQuestion,
         temperature=LLM_TEMPERATURE_QUESTION,
+        max_tokens=250,
     )
     if result is not None:
         return result
