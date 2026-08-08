@@ -12,6 +12,7 @@ Implements the state machine routing:
 from __future__ import annotations
 
 import logging
+import json
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, Depends
@@ -155,11 +156,14 @@ def _generate_welcome(candidate_name: str, candidate_role: str, planned_days: li
 
 def _db_to_pydantic_session(db_session: InterviewSessionModel) -> InterviewSession:
     """Helper to reconstruct the Pydantic session for computing gates."""
-    candidate = CandidateProfile.model_validate(db_session.candidate_snapshot)
+    candidate_dict = json.loads(db_session.candidate_snapshot) if isinstance(db_session.candidate_snapshot, str) else db_session.candidate_snapshot
+    candidate = CandidateProfile.model_validate(candidate_dict)
     
     # We need to reconstruct planned_days, etc.
     # To keep this mock state machine working, we recompute planned_days.
-    planned_days = _build_interview_plan(db_session.candidate_snapshot)
+    planned_days = _build_interview_plan(candidate_dict)
+    
+    session_plan = json.loads(db_session.plan) if isinstance(db_session.plan, str) else db_session.plan
     
     # Compute skill prior
     skill_prior = _compute_skill_prior(candidate)
@@ -183,7 +187,7 @@ def _db_to_pydantic_session(db_session: InterviewSessionModel) -> InterviewSessi
         status=SessionStatus(db_session.status),
         skill_prior=skill_prior,
         current_difficulty=_difficulty_from_prior(skill_prior),
-        plan=db_session.plan,
+        plan=session_plan,
         plan_index=db_session.plan_index,
         turns_in_current_day=db_session.turns_in_current_day,
         total_questions=db_session.total_questions,
@@ -285,8 +289,10 @@ async def interview(
         )
 
     # Fetch candidate info for plan
-    candidate_dict = db_session.candidate_snapshot
-    planned_days = _build_interview_plan(candidate_dict)
+    candidate_dict = json.loads(db_session.candidate_snapshot) if isinstance(db_session.candidate_snapshot, str) else db_session.candidate_snapshot
+    
+    # We don't actually need to re-plan, we can use the existing plan in the session
+    session_plan = json.loads(db_session.plan) if isinstance(db_session.plan, str) else db_session.plan
     
     # Calculate current turn_no
     turn_no = len(db_session.turns) + 1
@@ -335,8 +341,8 @@ async def interview(
         db_session.plan_index += 1
         db_session.turns_in_current_day = 0
         
-        if db_session.plan_index < len(db_session.plan):
-            next_day = db_session.plan[db_session.plan_index]
+        if db_session.plan_index < len(session_plan):
+            next_day = session_plan[db_session.plan_index]
         else:
             next_day = None # Will trigger completion or fallback
             
