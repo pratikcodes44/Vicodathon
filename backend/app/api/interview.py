@@ -37,7 +37,10 @@ from app.core.config import (
 )
 from app.core.database import SessionLocal, InterviewSessionModel, InterviewTurnModel
 from app.services.candidate_analyzer import get_eligible_curriculum_days
-
+from app.services.answer_evaluator import evaluate_answer
+from app.services.followup_controller import adapt_follow_up
+from app.services.question_generator import generate_question
+from app.models.interview import FollowUpType
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -292,7 +295,21 @@ async def interview(
     last_interviewer_turn = next((t for t in reversed(db_session.turns) if t.role == "INTERVIEWER"), None)
     current_day = last_interviewer_turn.curriculum_day if last_interviewer_turn else None
 
-    # Insert Candidate Turn
+    # ── LLM EVALUATION ──
+    last_interviewer_content = last_interviewer_turn.content if last_interviewer_turn else ""
+    current_cd = get_curriculum_day(current_day) if current_day else None
+    objectives = current_cd.objectives if current_cd else []
+    tools = current_cd.tools if current_cd else []
+    
+    evaluation = evaluate_answer(
+        candidate_answer=request.message,
+        context_summary="",  # Mock context summary
+        curriculum_objectives=objectives,
+        curriculum_tools=tools
+    )
+    evaluation = adapt_follow_up(evaluation)
+
+    # Insert Candidate Turn with evaluation
     candidate_turn = InterviewTurnModel(
         session_id=session_id,
         turn_no=turn_no,
@@ -306,16 +323,27 @@ async def interview(
     db_session.question_count += 1
     
     # Determine next topic
-    # For simplicity in mock, just step through planned_days
-    next_day_index = len(db_session.covered_days)
-    next_day = None
-    if next_day_index < len(planned_days):
-        next_day = planned_days[next_day_index]
-        db_session.covered_days = db_session.covered_days + [next_day]
-        db.add(db_session)
+    if evaluation.follow_up_needed:
+        next_day = current_day
+        question_kind = QuestionKind.FOLLOW_UP_CLARIFY if evaluation.follow_up_type == FollowUpType.CLARIFY else QuestionKind.FOLLOW_UP_SCENARIO
+        follow_up_focus = evaluation.follow_up_focus
+    else:
+        next_day_index = len(db_session.covered_days)
+        if next_day_index < len(planned_days):
+            next_day = planned_days[next_day_index]
+            db_session.covered_days = db_session.covered_days + [next_day]
+            db.add(db_session)
+        else:
+            next_day = None
+        question_kind = QuestionKind.ANCHOR
+        follow_up_focus = ""
 
     # Reconstruct Pydantic session for gates evaluation
     pydantic_session = _db_to_pydantic_session(db_session)
+    
+    # Hack to increment follow_up_count for the mock if we actually did one
+    if evaluation.follow_up_needed:
+        pydantic_session.follow_up_count += 1
 
     # Check hard gates
     if pydantic_session.gates_met:
@@ -347,13 +375,28 @@ async def interview(
             feedback=feedback,
         )
 
-    # Generate mock next question
+    # ── GENERATE NEXT QUESTION ──
     if next_day:
         cd = get_curriculum_day(next_day)
-        topic = cd.title if cd else f"Day {next_day}"
-        next_question = f"Great, let's move on to **{topic}**. What was your approach?"
+        n_objectives = cd.objectives if cd else []
+        n_tools = cd.tools if cd else []
     else:
-        next_question = "Can you elaborate on that and share a specific example from your experience?"
+        n_objectives, n_tools = [], []
+        next_day = current_day or 1
+
+    candidate_role = candidate_dict.get("member", {}).get("jobRole", "professional")
+    
+    generated_q = generate_question(
+        day=next_day,
+        objectives=n_objectives,
+        tools=n_tools,
+        difficulty=evaluation.recommended_next_difficulty if hasattr(evaluation, "recommended_next_difficulty") else DifficultyLevel.APPLIED,
+        question_kind=question_kind,
+        candidate_role=candidate_role,
+        context_summary="",
+        follow_up_focus=follow_up_focus
+    )
+    next_question = generated_q.question_text
 
     # Insert Interviewer Turn
     interviewer_turn = InterviewTurnModel(
@@ -361,7 +404,7 @@ async def interview(
         turn_no=turn_no + 1,
         role="INTERVIEWER",
         content=next_question,
-        curriculum_day=next_day or current_day
+        curriculum_day=next_day
     )
     db.add(interviewer_turn)
     db.commit()
