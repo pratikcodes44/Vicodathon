@@ -1,0 +1,885 @@
+[
+  {
+    "day": 7,
+    "difficulty": "FOUNDATION",
+    "question_text": "What are embeddings, and why are they useful in AI applications?",
+    "rubric": {
+      "key_concepts": ["dense vector representations", "semantic similarity", "dimensionality reduction"],
+      "expected_depth": "Should explain that embeddings map data to continuous vector spaces where similar items are close together.",
+      "example_answer_points": [
+        "Embeddings capture semantic meaning rather than exact word matches",
+        "Enable similarity search and nearest-neighbor lookups",
+        "Used in NLP, recommendation systems, and semantic search"
+      ]
+    }
+  },
+  {
+    "day": 7,
+    "difficulty": "FOUNDATION",
+    "question_text": "Explain the difference between cosine similarity and Euclidean distance when measuring similarity between embedding vectors.",
+    "rubric": {
+      "key_concepts": ["cosine similarity", "Euclidean distance", "vector magnitude", "normalized vectors"],
+      "expected_depth": "Should compare direction/angle alignment versus absolute geometric distance in vector space.",
+      "example_answer_points": [
+        "Cosine similarity measures the angle between vectors regardless of magnitude",
+        "Euclidean distance measures the straight-line distance between vector endpoints",
+        "For normalized vectors, cosine similarity and Euclidean distance produce identical orderings"
+      ]
+    }
+  },
+  {
+    "day": 7,
+    "difficulty": "FOUNDATION",
+    "question_text": "What role does dimensionality reduction (such as PCA or t-SNE) play when inspecting embedding clusters?",
+    "rubric": {
+      "key_concepts": ["PCA", "t-SNE", "dimensionality reduction", "vector visualization"],
+      "expected_depth": "Should explain how high-dimensional vectors (e.g. 1536d) are projected to 2D/3D for human inspection.",
+      "example_answer_points": [
+        "High-dimensional spaces cannot be directly visualized by humans",
+        "PCA identifies orthogonal axes of maximum variance to reduce dimensions linearly",
+        "t-SNE preserves local neighborhood relationships for non-linear visualization"
+      ]
+    }
+  },
+  {
+    "day": 7,
+    "difficulty": "APPLIED",
+    "question_text": "How would you handle text chunks that exceed the maximum context length of an embedding model like Sentence Transformers?",
+    "rubric": {
+      "key_concepts": ["text chunking", "sliding window", "token limits", "hierarchical embeddings"],
+      "expected_depth": "Should describe practical strategies for breaking long text into model-compliant chunks while preserving context.",
+      "example_answer_points": [
+        "Implement sentence-boundary or paragraph-based chunking with overlapping windows",
+        "Generate separate embeddings for each chunk and index them with metadata references",
+        "Use parent-document retrieval or mean-pooling over chunk embeddings where appropriate"
+      ]
+    }
+  },
+  {
+    "day": 7,
+    "difficulty": "APPLIED",
+    "question_text": "Describe how you would implement a semantic similarity search using scikit-learn and OpenAI embeddings in Python.",
+    "rubric": {
+      "key_concepts": ["OpenAI Embeddings API", "cosine_similarity", "NumPy array handling", "top-k ranking"],
+      "expected_depth": "Should detail the programmatic flow from fetching embeddings via API to computing matrix similarity.",
+      "example_answer_points": [
+        "Fetch vector representations for query and corpus using client.embeddings.create()",
+        "Convert vector lists into NumPy arrays and pass to scikit-learn's cosine_similarity()",
+        "Sort similarity scores in descending order to extract top-K matching document indices"
+      ]
+    }
+  },
+  {
+    "day": 7,
+    "difficulty": "APPLIED",
+    "question_text": "When generating embeddings for domain-specific vocabulary (e.g., medical or legal terms), what challenges might general-purpose embedding models face?",
+    "rubric": {
+      "key_concepts": ["out-of-vocabulary tokens", "domain drift", "fine-tuning embeddings", "semantic shift"],
+      "expected_depth": "Should explain limitations of general pre-trained models on specialized domain jargon.",
+      "example_answer_points": [
+        "General models may miss subtle domain distinctions or misinterpret jargon acronyms",
+        "Tokenizers may split specialized medical/legal terms into sub-optimal subwords",
+        "Can be mitigated by fine-tuning embedding models on domain pairs or using domain-specific models"
+      ]
+    }
+  },
+  {
+    "day": 7,
+    "difficulty": "SYSTEMS",
+    "question_text": "How would you design a scalable offline embedding pipeline to batch-encode millions of document chunks efficiently?",
+    "rubric": {
+      "key_concepts": ["batch processing", "GPU acceleration", "asynchronous queues", "rate limiting"],
+      "expected_depth": "Should cover concurrent API/local GPU execution, queueing, checkpointing, and rate limit management.",
+      "example_answer_points": [
+        "Use message queues (e.g., Celery/RabbitMQ) to distribute chunk encoding tasks",
+        "Batch texts into dynamic batch sizes to maximize GPU memory throughput or API limits",
+        "Implement persistent state checkpointing to resume failed batches without redundant encoding"
+      ]
+    }
+  },
+  {
+    "day": 7,
+    "difficulty": "SYSTEMS",
+    "question_text": "Compare the trade-offs between static embedding lookup caches, local open-source transformer inference, and cloud embedding API endpoints.",
+    "rubric": {
+      "key_concepts": ["latency", "cost", "privacy", "operational overhead", "throughput"],
+      "expected_depth": "Should evaluate trade-offs across financial cost, inference latency, data privacy, and maintenance.",
+      "example_answer_points": [
+        "Cloud APIs (OpenAI) offer zero infra setup but introduce per-token costs and network latency",
+        "Local open-source models (Sentence Transformers) require GPU hardware but ensure full data privacy and zero API fee",
+        "Embedding caching (Redis) eliminates redundant inference for repeated queries, reducing latency to single-digit ms"
+      ]
+    }
+  },
+  {
+    "day": 7,
+    "difficulty": "SYSTEMS",
+    "question_text": "How do vector dimension mismatches or changes in underlying embedding models affect downstream search systems and index migration strategy?",
+    "rubric": {
+      "key_concepts": ["vector dimensions", "index re-indexing", "backwards compatibility", "zero-downtime migration"],
+      "expected_depth": "Should discuss incompatibility of different embedding spaces and zero-downtime re-indexing strategies.",
+      "example_answer_points": [
+        "Vectors from different models/dimensions occupy distinct mathematical spaces and cannot be directly compared",
+        "Upgrading an embedding model requires re-encoding the entire document corpus",
+        "Blue-green index deployments allow building the new vector index in parallel before switching search traffic"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "difficulty": "FOUNDATION",
+    "question_text": "What is hybrid retrieval, and why does combining keyword search (BM25/SQL) with vector search improve search accuracy?",
+    "rubric": {
+      "key_concepts": ["hybrid search", "BM25", "vector search", "dense vs sparse retrieval"],
+      "expected_depth": "Should explain complementary strengths of exact keyword matching (sparse) and semantic search (dense).",
+      "example_answer_points": [
+        "Vector search excels at semantic intent and conceptual matching",
+        "Keyword/BM25 search excels at exact matches (part numbers, proper nouns, codes)",
+        "Hybrid search combines both to prevent semantic search from missing exact keyword hits"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "difficulty": "FOUNDATION",
+    "question_text": "Explain reciprocal rank fusion (RRF) and how it merges ranked lists from different search engines.",
+    "rubric": {
+      "key_concepts": ["Reciprocal Rank Fusion", "RRF constant k", "rank-based merging", "score normalization"],
+      "expected_depth": "Should describe the RRF formula score = sum(1 / (k + rank)) and why rank position matters more than raw scores.",
+      "example_answer_points": [
+        "RRF merges results by position rank rather than incomparable raw similarity scores",
+        "Uses formula 1 / (k + rank) for each document across multiple result lists",
+        "Provides robust rank aggregation without needing complex score calibration"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "difficulty": "FOUNDATION",
+    "question_text": "What metrics are commonly used to evaluate retrieval accuracy in an information retrieval system?",
+    "rubric": {
+      "key_concepts": ["Precision@K", "Recall@K", "MRR (Mean Reciprocal Rank)", "NDCG"],
+      "expected_depth": "Should define core evaluation metrics and explain when to use each.",
+      "example_answer_points": [
+        "Precision@K measures the proportion of retrieved top-K documents that are relevant",
+        "Recall@K measures the proportion of total relevant documents retrieved in top-K",
+        "MRR measures how high up the first relevant result appears in the ranked list"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "difficulty": "APPLIED",
+    "question_text": "How would you construct a query router in Python that decides whether a user prompt requires a database lookup, vector search, or hybrid search?",
+    "rubric": {
+      "key_concepts": ["query classification", "intent detection", "SQL vs Vector routing", "rule-based vs LLM router"],
+      "expected_depth": "Should detail query analysis techniques (regex, keyword flags, or lightweight intent classifier).",
+      "example_answer_points": [
+        "Analyze query structure for exact filters (e.g. dates, IDs) vs natural language concepts",
+        "Use structured LLM router or regex rules to select SQL, vector, or hybrid execution path",
+        "Return structured route decision payload containing targeted search parameters"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "difficulty": "APPLIED",
+    "question_text": "Describe an algorithm to deduplicate and rank retrieved search results from ChromaDB and SQLite before feeding them to an LLM context.",
+    "rubric": {
+      "key_concepts": ["deduplication", "document ID matching", "score normalization", "context window budget"],
+      "expected_depth": "Should outline steps to combine distinct search outputs, remove overlapping text, and prune to fit context limits.",
+      "example_answer_points": [
+        "Normalize document identifiers and match duplicate records retrieved across stores",
+        "Combine metadata and compute aggregated relevance score (RRF or weighted combination)",
+        "Sort merged list and truncate results based on total token budget of the destination LLM"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "difficulty": "APPLIED",
+    "question_text": "How do you evaluate retrieval precision and recall when user queries contain ambiguous or multi-part intent?",
+    "rubric": {
+      "key_concepts": ["query decomposition", "multi-query retrieval", "evaluation dataset", "synthetic queries"],
+      "expected_depth": "Should explain techniques like query expansion/decomposition and test set generation.",
+      "example_answer_points": [
+        "Decompose multi-part queries into sub-queries and evaluate retrieval for each component",
+        "Construct golden evaluation ground-truth datasets with annotated relevant documents",
+        "Calculate aggregate Precision@K and Recall@K across diverse query test suites"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "difficulty": "SYSTEMS",
+    "question_text": "Design a high-throughput retrieval matching engine that balances latency, recall, and infrastructure cost across SQL and vector databases.",
+    "rubric": {
+      "key_concepts": ["parallel retrieval", "async connection pools", "caching", "timeout circuit breakers"],
+      "expected_depth": "Should address concurrent querying, connection pooling, caching strategies, and fallback mechanics.",
+      "example_answer_points": [
+        "Execute vector search (ChromaDB) and relational search (SQLite/Postgres) concurrently using asyncio.gather",
+        "Implement a Redis caching layer for frequent search queries and computed embeddings",
+        "Set strict per-source SLA timeouts so slow vector lookups fall back gracefully to SQL hits"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "difficulty": "SYSTEMS",
+    "question_text": "How would you handle real-time vector index updates without impacting search throughput or query response times?",
+    "rubric": {
+      "key_concepts": ["read-write lock", "HNSW graph updating", "shadow indexing", "write-ahead buffer"],
+      "expected_depth": "Should discuss concurrency control and index mutability techniques in production vector stores.",
+      "example_answer_points": [
+        "Use in-memory write buffer / delta index to hold newly ingested vectors temporarily",
+        "Perform background batch merges into main HNSW index to prevent graph lock contention",
+        "Ensure read queries search both main index and active delta buffer seamlessly"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "difficulty": "SYSTEMS",
+    "question_text": "Describe how you would architect a cross-encoder re-ranking step in a multi-stage retrieval system for production RAG.",
+    "rubric": {
+      "key_concepts": ["two-stage retrieval", "cross-encoder reranking", "latency budget", "candidate pool sizing"],
+      "expected_depth": "Should cover initial high-recall bi-encoder search (top-100) followed by high-precision cross-encoder re-ranking (top-10).",
+      "example_answer_points": [
+        "First stage: Fast bi-encoder vector search retrieves broad set of top-N (e.g. 50-100) candidates",
+        "Second stage: Compute joint query-document cross-attention using a Cross-Encoder to re-score top candidates",
+        "Truncate output to top-K (e.g. 5-10) relevant passages for final context prompt"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "difficulty": "FOUNDATION",
+    "question_text": "What is function calling (tool calling) in LLMs, and how does the model select which tool to call based on schema definitions?",
+    "rubric": {
+      "key_concepts": ["function calling", "JSON schema", "system prompt", "tool selection"],
+      "expected_depth": "Should explain how JSON tool schemas are injected into model context and parsed from generated completion outputs.",
+      "example_answer_points": [
+        "Tools are defined with name, description, and parameter JSON Schema objects",
+        "LLM evaluates user prompt against tool descriptions to decide if tool execution is required",
+        "Model outputs a structured JSON object containing tool name and argument values rather than plain text"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "difficulty": "FOUNDATION",
+    "question_text": "How does Pydantic help ensure structured JSON outputs when interfacing with LLM APIs?",
+    "rubric": {
+      "key_concepts": ["Pydantic BaseModel", "data validation", "type coercion", "schema generation"],
+      "expected_depth": "Should explain Pydantic's role in schema generation (model_json_schema) and runtime output validation.",
+      "example_answer_points": [
+        "Pydantic models auto-generate OpenAPI/JSON schemas required by LLM function calling APIs",
+        "Validates model-generated JSON responses against Python type hints at runtime",
+        "Throws explicit ValidationError if fields are missing or have incorrect types"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "difficulty": "FOUNDATION",
+    "question_text": "What is the difference between JSON Mode enforcement and strict schema tool calling in modern foundation models?",
+    "rubric": {
+      "key_concepts": ["JSON Mode", "Strict Schema Enforcement", "constrained decoding", "grammar-guided decoding"],
+      "expected_depth": "Should contrast loose JSON syntax output with guaranteed schema-conforming constrained decoding.",
+      "example_answer_points": [
+        "JSON Mode guarantees valid JSON syntax but does not enforce specific object fields or types",
+        "Strict tool calling uses constrained decoding / context-free grammars to guarantee exact schema compliance",
+        "Strict mode eliminates key omission and type mismatch errors at the model token generation layer"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "difficulty": "APPLIED",
+    "question_text": "How do you define a Pydantic schema for a tool that accepts parameters with default values, validation rules, and nested models?",
+    "rubric": {
+      "key_concepts": ["Field validator", "nested BaseModel", "Optional types", "Field descriptions"],
+      "expected_depth": "Should write or describe Python code using Pydantic Field(), Field(default=...), and @field_validator.",
+      "example_answer_points": [
+        "Define nested Pydantic BaseModels for complex hierarchical structures",
+        "Use Field(description=...) to provide clear guidance to the LLM on field intent",
+        "Add custom @field_validator methods to enforce range checks, regex formats, or custom logic"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "difficulty": "APPLIED",
+    "question_text": "Describe how to parse, validate, and handle JSON parsing errors or missing fields when receiving structured output from an LLM call.",
+    "rubric": {
+      "key_concepts": ["try-except ValidationError", "retry prompt loop", "auto-correction", "error feedback prompt"],
+      "expected_depth": "Should explain catching validation errors and feeding error tracebacks back into the LLM for self-correction.",
+      "example_answer_points": [
+        "Wrap LLM output parsing in try/except blocks catching Pydantic ValidationError or json.JSONDecodeError",
+        "If validation fails, append the specific error message to message history and prompt model to correct output",
+        "Set maximum retry attempts (e.g. 3) before falling back to safe default response or raising exception"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "difficulty": "APPLIED",
+    "question_text": "How would you implement structured logging for LLM tool invocations to track tool names, inputs, execution status, and latency?",
+    "rubric": {
+      "key_concepts": ["structured logging", "structlog / python logging", "context variables", "telemetry"],
+      "expected_depth": "Should describe capturing invocation lifecycle events into JSON-formatted log entries.",
+      "example_answer_points": [
+        "Use decorator pattern around tool functions to intercept start time, arguments, and end time",
+        "Emit JSON structured log logs with keys: trace_id, tool_name, input_params, status, execution_time_ms",
+        "Log execution exceptions and stack traces under error keys for observability dashboards"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "difficulty": "SYSTEMS",
+    "question_text": "How do you design a resilient tool execution middleware that catches tool errors, retries with backoff, and provides clean error context to the LLM?",
+    "rubric": {
+      "key_concepts": ["middleware pattern", "exponential backoff", "graceful degradation", "tool exception handling"],
+      "expected_depth": "Should architect error interception layer between LLM call dispatcher and backend tool endpoints.",
+      "example_answer_points": [
+        "Wrap tool execution in middleware pipeline handling timeouts, network failures, and bad arguments",
+        "Apply exponential backoff for transient external API failures",
+        "Format unrecoverable tool errors as sanitized tool-result messages so LLM can inform user or select alternate tool"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "difficulty": "SYSTEMS",
+    "question_text": "Discuss the security considerations of dynamically executing model-generated arguments against internal database or API endpoints.",
+    "rubric": {
+      "key_concepts": ["parameter sanitization", "least privilege", "injection defense", "sandboxing"],
+      "expected_depth": "Should detail risks like SQL/Command injection and isolation safeguards.",
+      "example_answer_points": [
+        "Never pass raw LLM strings into shell commands, eval(), or unparameterized SQL queries",
+        "Enforce strict schema validation and parameter type casting before downstream invocation",
+        "Execute dangerous tools inside isolated sandboxes (Docker, WebAssembly) with restricted network access"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "difficulty": "SYSTEMS",
+    "question_text": "Architect a tool orchestration system where an LLM must chain 5+ dependent tools while preventing infinite tool loops and staying within token budgets.",
+    "rubric": {
+      "key_concepts": ["recursion limit", "tool loop detection", "context pruning", "state tracking"],
+      "expected_depth": "Should describe state tracking mechanisms, duplicate call detection, and sliding window memory management.",
+      "example_answer_points": [
+        "Maintain execution call graph and detect duplicate tool parameter invocations to break infinite loops",
+        "Set strict max_steps recursion limit on agent execution run loop",
+        "Summarize or prune previous tool outputs when context history approaches token threshold"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "difficulty": "FOUNDATION",
+    "question_text": "What is a multi-agent architecture, and how does it differ from single-agent prompting patterns?",
+    "rubric": {
+      "key_concepts": ["multi-agent architecture", "specialized roles", "task decomposition", "agent coordination"],
+      "expected_depth": "Should explain dividing complex domains among specialized agents vs single system prompt.",
+      "example_answer_points": [
+        "Multi-agent breaks complex tasks into specialized domain roles (e.g. Researcher, Coder, Reviewer)",
+        "Reduces prompt complexity and context bloat compared to fitting all instructions in one single prompt",
+        "Enables modular testing, agent reusability, and parallelized execution"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "difficulty": "FOUNDATION",
+    "question_text": "Explain the role of a Router Agent in directing task execution to specialized agents.",
+    "rubric": {
+      "key_concepts": ["Router Agent", "intent classification", "conditional routing", "sub-graph selection"],
+      "expected_depth": "Should describe how a supervisor/router agent evaluates inputs and selects target specialist agent.",
+      "example_answer_points": [
+        "Router Agent inspects initial user request or intermediate state",
+        "Classifies task requirements and delegates control flow to specific worker agent",
+        "Ensures workflow routes only to agents equipped with relevant tools and system prompts"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "difficulty": "FOUNDATION",
+    "question_text": "What state management strategies are used in frameworks like LangGraph to maintain shared state across multiple sub-agents?",
+    "rubric": {
+      "key_concepts": ["LangGraph State", "TypedDict state schema", "state transition", "reducers"],
+      "expected_depth": "Should explain central state graphs where nodes (agents) mutate shared state schemas via reducers.",
+      "example_answer_points": [
+        "Centralized graph state defined via Python TypedDict or Pydantic class",
+        "Agents act as graph nodes receiving state input and returning state updates",
+        "State channels use reducer functions (e.g. append messages) to merge parallel worker outputs safely"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "difficulty": "APPLIED",
+    "question_text": "How would you build a multi-agent pipeline using CrewAI or LangGraph where a research agent gathers data and a writer agent formats the final report?",
+    "rubric": {
+      "key_concepts": ["CrewAI Crew/Task", "LangGraph edge routing", "agent handoff", "sequential process"],
+      "expected_depth": "Should detail agent definition, task assignment, tool binding, and sequential handoff logic.",
+      "example_answer_points": [
+        "Define Research Agent equipped with web search and vector retrieval tools",
+        "Define Writer Agent with markdown formatting guidelines and zero external search tools",
+        "Connect agents via sequential pipeline (CrewAI) or state graph edge (LangGraph) where output of Researcher populates Writer input state"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "difficulty": "APPLIED",
+    "question_text": "Describe how to implement fallback and error recovery when a specialized agent fails to complete its assigned sub-task.",
+    "rubric": {
+      "key_concepts": ["error recovery edge", "supervisor fallback", "human-in-the-loop", "state rollback"],
+      "expected_depth": "Should detail conditional graph edges handling exceptions and routing back to supervisor or fallback agent.",
+      "example_answer_points": [
+        "Catch node execution failures in LangGraph/CrewAI error handler",
+        "Route failed task state back to Supervisor Agent with error feedback payload",
+        "Supervisor agent dynamically re-assigns task or simplifies requirements for retry attempt"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "difficulty": "APPLIED",
+    "question_text": "How do you prevent cyclic agent communications or infinite delegation loops in a multi-agent network?",
+    "rubric": {
+      "key_concepts": ["max loop counter", "delegation depth limit", "state history inspection", "termination criteria"],
+      "expected_depth": "Should detail practical guardrails against infinite inter-agent conversations.",
+      "example_answer_points": [
+        "Track total iteration count in shared state object and terminate when max limit reached",
+        "Maintain visited node stack to prevent Agent A from delegating back to Agent B endlessly",
+        "Require explicit stop signals / conditions before executing next delegation edge"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "difficulty": "SYSTEMS",
+    "question_text": "Architect a distributed multi-agent system where agents execute asynchronously across microservices while sharing global memory state.",
+    "rubric": {
+      "key_concepts": ["distributed agents", "Redis state store", "event-driven messaging", "Celery / Kafka workers"],
+      "expected_depth": "Should detail microservice decoupling, distributed state persistence, and pub/sub message passing.",
+      "example_answer_points": [
+        "Decouple agents into independent stateless microservices communicating over Redis/RabbitMQ message bus",
+        "Persist global workspace state in Redis / PostgreSQL with optimistic locking",
+        "Use webhooks or gRPC for low-latency agent-to-agent task signaling"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "difficulty": "SYSTEMS",
+    "question_text": "How would you evaluate and benchmark the accuracy, latency, and token cost of a multi-agent workflow versus a single monolithic agent?",
+    "rubric": {
+      "key_concepts": ["A/B testing", "benchmarking framework", "token tracking", "cost vs accuracy trade-off"],
+      "expected_depth": "Should outline empirical testing methodologies comparing cost, speed, and output quality across architectures.",
+      "example_answer_points": [
+        "Run standardized benchmark evaluation dataset across both single-agent and multi-agent systems",
+        "Log total latency breakdown, cumulative prompt/completion tokens, and total infrastructure cost",
+        "Measure output quality using LLM-as-a-judge (e.g. Ragas / G-Eval metrics) to determine if accuracy gains justify token overhead"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "difficulty": "SYSTEMS",
+    "question_text": "Describe how to implement Human-In-The-Loop (HITL) approval gates in a LangGraph state graph before executing critical agent tools.",
+    "rubric": {
+      "key_concepts": ["LangGraph interrupt_before", "checkpointing", "state persistence", "approval API endpoint"],
+      "expected_depth": "Should explain thread persistence, state pausing via interrupts, and resume execution mechanics.",
+      "example_answer_points": [
+        "Use LangGraph compile(interrupt_before=['sensitive_tool_node']) with persistent checkpointer",
+        "Graph pauses execution state and saves snapshot to database when reaching critical node",
+        "Expose REST API endpoint for human approval/rejection; upon approval, resume graph execution using update_state()"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "difficulty": "FOUNDATION",
+    "question_text": "What is the Model Context Protocol (MCP), and what architectural problems does it solve for LLM integration?",
+    "rubric": {
+      "key_concepts": ["Model Context Protocol", "standardized interface", "tool/data isolation", "open standard"],
+      "expected_depth": "Should explain how MCP standardizes connection between AI models and external data/tool providers.",
+      "example_answer_points": [
+        "MCP provides open standard protocol for connecting AI clients to tools and context servers",
+        "Eliminates need to write custom integration code for every combination of LLM client and API tool",
+        "Decouples tool implementation from model host applications"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "difficulty": "FOUNDATION",
+    "question_text": "Explain the primary components of MCP: Host, Client, and Server.",
+    "rubric": {
+      "key_concepts": ["MCP Host", "MCP Client", "MCP Server", "transport layer"],
+      "expected_depth": "Should define responsibility of Host application, Client protocol layer, and Server tool provider.",
+      "example_answer_points": [
+        "Host: LLM application initiating work (e.g. Claude Desktop, Cline, custom app)",
+        "Client: Internal component establishing 1:1 connection with server and negotiating capabilities",
+        "Server: Program exposing tools, resources, and prompt templates to client"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "difficulty": "FOUNDATION",
+    "question_text": "What are the three main capabilities exposed by an MCP server: Tools, Resources, and Prompts?",
+    "rubric": {
+      "key_concepts": ["MCP Tools", "MCP Resources", "MCP Prompts", "capability primitives"],
+      "expected_depth": "Should distinguish executable functions (Tools), readable data items (Resources), and reusable templates (Prompts).",
+      "example_answer_points": [
+        "Tools: Executable functions invoked by the model to perform actions or side effects",
+        "Resources: File-like data or context streams read by the client application",
+        "Prompts: Pre-defined prompt templates exposed by server to guide user/model interactions"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "difficulty": "APPLIED",
+    "question_text": "How do you create a custom MCP server using the Python SDK and expose local Python functions as MCP tools?",
+    "rubric": {
+      "key_concepts": ["mcp Python SDK", "Server instance", "@mcp.tool() decorator", "stdio transport"],
+      "expected_depth": "Should describe initializing FastMCP/Server, decorating tool functions, and running stdio transport.",
+      "example_answer_points": [
+        "Initialize MCP server object using FastMCP('server_name') from mcp.server.fastmcp",
+        "Decorate Python functions with @mcp.tool() and provide docstrings and parameter type hints",
+        "Run server using mcp.run(transport='stdio') or stdio server stream"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "difficulty": "APPLIED",
+    "question_text": "Describe how Claude Desktop or Cline acts as an MCP client to discover and invoke tools registered on a local MCP server.",
+    "rubric": {
+      "key_concepts": ["mcp_config.json", "command spawn", "JSON-RPC handshake", "tools/list & tools/call"],
+      "expected_depth": "Should explain client configuration, subprocess launching, capability negotiation, and JSON-RPC messaging.",
+      "example_answer_points": [
+        "Client reads mcp_config.json containing server launch commands (e.g. python server.py)",
+        "Client spawns server process and performs JSON-RPC handshake via standard I/O",
+        "Client calls tools/list to fetch schemas, presents tools to LLM, and invokes tools/call when model requests execution"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "difficulty": "APPLIED",
+    "question_text": "How do you write unit and integration tests to verify live tool execution on an MCP server?",
+    "rubric": {
+      "key_concepts": ["MCP Client session", "AsyncExitStack", "stdio client testing", "pytest-asyncio"],
+      "expected_depth": "Should describe launching server in test harness, connecting test MCP client, and invoking call_tool().",
+      "example_answer_points": [
+        "Set up test client session using mcp.ClientSession with stdio client transport in pytest fixture",
+        "Call await session.initialize() and assert listed tools match expected schema list",
+        "Invoke await session.call_tool('tool_name', arguments={...}) and validate returned Content text/json"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "difficulty": "SYSTEMS",
+    "question_text": "How would you scale MCP servers in an enterprise environment with multiple transports (STDIO vs SSE over HTTP)?",
+    "rubric": {
+      "key_concepts": ["STDIO transport", "SSE (Server-Sent Events) transport", "HTTP reverse proxy", "scalability"],
+      "expected_depth": "Should compare local process STDIO for desktop apps vs remote SSE over HTTP for distributed web servers.",
+      "example_answer_points": [
+        "STDIO is optimal for local single-user desktop client isolation (spawns per client)",
+        "SSE over HTTP enables remote distributed MCP servers shared across multiple web client sessions",
+        "Scale remote SSE MCP servers using load balancers, container orchestration, and auth token headers"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "difficulty": "SYSTEMS",
+    "question_text": "Discuss authentication, authorization, and process isolation strategies for executing MCP tools in multi-tenant environments.",
+    "rubric": {
+      "key_concepts": ["OAuth2 / Bearer Tokens", "container sandboxing", "RBAC", "process isolation"],
+      "expected_depth": "Should detail security boundaries for tenant-isolated tool execution.",
+      "example_answer_points": [
+        "Authenticate remote client requests via JWT / OAuth2 bearer tokens in SSE HTTP headers",
+        "Enforce tenant RBAC to restrict available tools and resource URIs per user role",
+        "Run individual MCP server instances in ephemeral container sandboxing (gVisor/Docker) to isolate file system and network"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "difficulty": "SYSTEMS",
+    "question_text": "Architect an MCP proxy gateway that aggregates tool registries from dozens of backend microservices into a single client connection.",
+    "rubric": {
+      "key_concepts": ["MCP Gateway Proxy", "tool namespace conflict resolution", "dynamic registration", "health checking"],
+      "expected_depth": "Should design central proxy component aggregating downstream MCP servers and handling routing.",
+      "example_answer_points": [
+        "Gateway exposes single MCP server interface to LLM client application",
+        "Maintains dynamic registry of downstream microservice MCP servers via SSE/gRPC",
+        "Namespaces tools (e.g. service_a__tool_name) to prevent collisions and routes tools/call messages to target microservice"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "difficulty": "FOUNDATION",
+    "question_text": "What is a prompt injection attack (direct vs indirect), and why are LLMs vulnerable to it?",
+    "rubric": {
+      "key_concepts": ["direct prompt injection", "indirect prompt injection", "instruction vs data ambiguity", "jailbreaking"],
+      "expected_depth": "Should explain why LLMs struggle to distinguish system instructions from untrusted user data.",
+      "example_answer_points": [
+        "Direct injection: User inputs instructions to override system prompt rules (jailbreaking)",
+        "Indirect injection: Untrusted external data (webpages, documents) contains hidden malicious instructions",
+        "LLMs concatenate instructions and data into a single text stream, making separation difficult"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "difficulty": "FOUNDATION",
+    "question_text": "What are input guardrails, and how do they protect AI applications from malicious user inputs?",
+    "rubric": {
+      "key_concepts": ["input guardrails", "sanitization", "policy enforcement", "NeMo Guardrails"],
+      "expected_depth": "Should describe preprocessing checks executed before forwarding user prompt to LLM.",
+      "example_answer_points": [
+        "Guardrails evaluate user input against safety guidelines, toxic content filters, and topic restrictions",
+        "Intercept malicious prompts before reaching expensive foundation model inference",
+        "Return safe fallback responses when policy violations are detected"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "difficulty": "FOUNDATION",
+    "question_text": "Explain the principle of least privilege when granting LLMs access to database connectors and external API tools.",
+    "rubric": {
+      "key_concepts": ["least privilege", "read-only scopes", "API token scoping", "data boundaries"],
+      "expected_depth": "Should explain why AI agents should only be granted minimum required database/API permissions.",
+      "example_answer_points": [
+        "Restrict database connections used by AI agents to read-only views where write operations are unnecessary",
+        "Scope API tokens strictly to specific endpoints and resources required for task execution",
+        "Prevents compromised or misbehaving agent from executing destructive actions (e.g. DROP TABLE)"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "difficulty": "APPLIED",
+    "question_text": "How would you implement input sanitization and regex pattern matching in FastAPI to intercept SQL injection and prompt injection attempts?",
+    "rubric": {
+      "key_concepts": ["FastAPI middleware", "regex sanitization", "Pydantic validator", "request interception"],
+      "expected_depth": "Should write or describe FastAPI request validation middleware checking inputs against malicious patterns.",
+      "example_answer_points": [
+        "Create FastAPI request middleware or Pydantic custom string validators",
+        "Scan string fields against regex patterns for common injection signatures ('IGNORE PREVIOUS INSTRUCTIONS', SQL meta-characters)",
+        "Raise HTTP 400 Bad Request or sanitized input error if suspicious patterns trigger threshold"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "difficulty": "APPLIED",
+    "question_text": "Describe how to set up an output validation layer that masks Sensitive PII (Personally Identifiable Information) before returning responses to users.",
+    "rubric": {
+      "key_concepts": ["PII detection", "regex / Presidio", "anonymization / masking", "output guardrails"],
+      "expected_depth": "Should detail scanning generated model outputs for emails, SSNs, credit cards, and replacing them with tokens.",
+      "example_answer_points": [
+        "Integrate PII detection engine (e.g. Microsoft Presidio or regex suite) into response pipeline",
+        "Scan raw LLM completion text for SSNs, credit card numbers, email addresses, and phone numbers",
+        "Replace detected sensitive entities with anonymized placeholders (e.g., [REDACTED_EMAIL]) before returning HTTP payload"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "difficulty": "APPLIED",
+    "question_text": "How would you write unit tests to simulate adversarial prompt injection attacks against an AI agent system?",
+    "rubric": {
+      "key_concepts": ["adversarial testing", "red-teaming test suite", "pytest assertions", "security benchmarks"],
+      "expected_depth": "Should describe automated red-team test suites passing known injection payloads and verifying safety.",
+      "example_answer_points": [
+        "Assemble dataset of adversarial jailbreak strings and prompt injection vectors",
+        "Run automated Pytest suite asserting system rejects injection and maintains safety guardrails",
+        "Assert output does not leak system instructions, secret tokens, or execute unauthorized tool calls"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "difficulty": "SYSTEMS",
+    "question_text": "Architect a complete defense-in-depth security framework for an enterprise RAG system including WAF, input guardrails, sandbox tool execution, and output scanning.",
+    "rubric": {
+      "key_concepts": ["defense-in-depth", "WAF", "input/output guardrails", "isolated sandbox", "audit logging"],
+      "expected_depth": "Should diagram/describe multi-layer security architecture protecting all entry and exit points.",
+      "example_answer_points": [
+        "Layer 1: Edge WAF and API Rate Limiting for DDoS and basic attack mitigation",
+        "Layer 2: Input Guardrail classifier (lightweight model/regex) evaluating prompt safety",
+        "Layer 3: Isolated container sandbox for executing tools with read-only DB permissions and strict network egress controls",
+        "Layer 4: Output Guardrail scanner for PII masking and leak detection before payload response"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "difficulty": "SYSTEMS",
+    "question_text": "How do you enforce strict data privacy, tenant isolation, and RBAC (Role-Based Access Control) when querying vector databases?",
+    "rubric": {
+      "key_concepts": ["tenant isolation", "vector metadata filtering", "RBAC claims", "namespace segregation"],
+      "expected_depth": "Should detail metadata filter injection matching user claims to prevent cross-tenant vector data access.",
+      "example_answer_points": [
+        "Store tenant_id and user_roles as indexed metadata payload on every vector chunk",
+        "Extract authenticated user JWT claims at API endpoint layer",
+        "Mandate inclusion of tenant_id filter in every vector store search query at database client driver level"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "difficulty": "SYSTEMS",
+    "question_text": "Describe how to design a real-time anomaly detection system that monitors LLM prompts and responses for policy violations and rate limits.",
+    "rubric": {
+      "key_concepts": ["anomaly detection", "rate limiting (sliding window)", "event stream analysis", "alerting"],
+      "expected_depth": "Should outline asynchronous event streaming, sliding window rate limits, and metric alert thresholds.",
+      "example_answer_points": [
+        "Stream API logs and model events to Kafka / Redis PubSub topic asynchronously",
+        "Apply Redis sliding window counter to enforce token and request rate limits per user/API key",
+        "Trigger automated security alerts (PagerDuty/Slack) and temporarily lock account upon detecting anomaly spikes"
+      ]
+    }
+  },
+  {
+    "day": 31,
+    "difficulty": "FOUNDATION",
+    "question_text": "What are the core components required to assemble a production-grade full-stack AI application?",
+    "rubric": {
+      "key_concepts": ["frontend UI", "API gateway", "agent orchestrator", "vector store / DB", "observability"],
+      "expected_depth": "Should summarize key functional modules from user interface to database layer and observability.",
+      "example_answer_points": [
+        "Frontend UI (React) for real-time interaction and token streaming",
+        "Backend service API (FastAPI) handling request routing, security, and session state",
+        "Orchestration & Data layer (LangChain/MCP, ChromaDB, SQLite) for business logic and RAG retrieval"
+      ]
+    }
+  },
+  {
+    "day": 31,
+    "difficulty": "FOUNDATION",
+    "question_text": "How do you demonstrate end-to-end functionality from user prompt to agent orchestration, database retrieval, and UI rendering?",
+    "rubric": {
+      "key_concepts": ["end-to-end integration", "request lifecycle", "data flow", "live demo setup"],
+      "expected_depth": "Should trace complete user prompt flow through entire system stack.",
+      "example_answer_points": [
+        "User submits query in web UI; request triggers backend REST/SSE API endpoint",
+        "Backend routes request to agent orchestrator which executes vector retrieval and tool calls",
+        "Model response streams back to UI via SSE tokens while structured state persists to database"
+      ]
+    }
+  },
+  {
+    "day": 31,
+    "difficulty": "FOUNDATION",
+    "question_text": "Why is component decoupling (e.g. separating API layer, agent logic, vector store, frontend) critical for AI system maintainability?",
+    "rubric": {
+      "key_concepts": ["decoupling", "separation of concerns", "interchangeability", "independent scaling"],
+      "expected_depth": "Should explain benefits of modular architecture when underlying LLM models or tools evolve.",
+      "example_answer_points": [
+        "Allows swapping foundation model providers or vector databases without refactoring frontend/API layers",
+        "Enables independent scaling and deployment of heavy compute components (inference/vector search)",
+        "Simplifies unit testing and debugging by isolating specific failures to single module scope"
+      ]
+    }
+  },
+  {
+    "day": 31,
+    "difficulty": "APPLIED",
+    "question_text": "How do you evaluate and present performance metrics (latency, token cost, retrieval precision, accuracy) for a capstone AI application?",
+    "rubric": {
+      "key_concepts": ["performance evaluation", "cost tracking", "retrieval evaluation", "dashboard visualization"],
+      "expected_depth": "Should describe collecting telemetry and presenting quantitative trade-off metrics.",
+      "example_answer_points": [
+        "Track latency breakdowns (TTFT - Time To First Token, retrieval latency, tool execution time)",
+        "Calculate token usage and cost per query across model endpoints",
+        "Present retrieval precision/recall scores evaluated against benchmark datasets"
+      ]
+    }
+  },
+  {
+    "day": 31,
+    "difficulty": "APPLIED",
+    "question_text": "Describe how you integrated backend microservices (FastAPI, MCP servers, Vector DB) with a frontend interface during your capstone project.",
+    "rubric": {
+      "key_concepts": ["REST / SSE API", "CORS configuration", "state synchronization", "WebSocket / EventSource"],
+      "expected_depth": "Should detail API contracts, streaming protocols, and asynchronous state handling.",
+      "example_answer_points": [
+        "Configured FastAPI CORS middleware to accept requests from React frontend domain",
+        "Utilized Server-Sent Events (SSE) to stream generated answer tokens to frontend EventSource hooks",
+        "Synchronized session state and active tool execution status indicators in UI components"
+      ]
+    }
+  },
+  {
+    "day": 31,
+    "difficulty": "APPLIED",
+    "question_text": "How do you handle edge cases such as model API outages, network timeouts, or invalid tool responses in a final project demo?",
+    "rubric": {
+      "key_concepts": ["graceful degradation", "fallback LLM provider", "circuit breaker", "user error notifications"],
+      "expected_depth": "Should explain resilience patterns preventing catastrophic demo crashes.",
+      "example_answer_points": [
+        "Implement fallback LLM provider routing (e.g. switch to secondary model on 5xx API errors)",
+        "Set client-side and server-side request timeouts with clear error messages shown in UI",
+        "Cache pre-computed responses or mock data endpoints for offline demo contingency"
+      ]
+    }
+  },
+  {
+    "day": 31,
+    "difficulty": "SYSTEMS",
+    "question_text": "Present the high-level production architecture for a scalable AI system handling 10,000 concurrent user sessions with high availability.",
+    "rubric": {
+      "key_concepts": ["load balancer", "horizontal pod autoscaling", "Redis cluster", "distributed vector DB", "CDN"],
+      "expected_depth": "Should articulate end-to-end production architecture handling scale and traffic spikes.",
+      "example_answer_points": [
+        "Ingress Load Balancers routing traffic across horizontally auto-scaled FastAPI pods",
+        "Redis cluster managing session state, prompt rate limits, and semantic query caching",
+        "Distributed Vector DB (Qdrant/Milvus cluster) with read replicas for high-throughput similarity search"
+      ]
+    }
+  },
+  {
+    "day": 31,
+    "difficulty": "SYSTEMS",
+    "question_text": "How would you transition a prototype AI capstone into a fully containerized Kubernetes deployment with autoscaling and blue/green releases?",
+    "rubric": {
+      "key_concepts": ["Kubernetes Deployment", "HPA (Horizontal Pod Autoscaler)", "Ingress controller", "blue/green deployment"],
+      "expected_depth": "Should detail containerization, K8s manifests, HPA metrics (CPU/request count), and zero-downtime releases.",
+      "example_answer_points": [
+        "Create multi-stage Dockerfiles for optimized frontend and backend production images",
+        "Define Kubernetes Deployment, Service, and HPA manifests based on memory and target RPS metrics",
+        "Use ArgoCD or Nginx Ingress weighted routing for zero-downtime blue/green version cutovers"
+      ]
+    }
+  },
+  {
+    "day": 31,
+    "difficulty": "SYSTEMS",
+    "question_text": "Discuss the engineering trade-offs made between model latency, context size, retrieval accuracy, and operational cost in your final architecture.",
+    "rubric": {
+      "key_concepts": ["trade-off analysis", "model sizing (8B vs 70B)", "context window vs chunking", "cost optimization"],
+      "expected_depth": "Should demonstrate holistic system engineering judgment balancing technical and financial constraints.",
+      "example_answer_points": [
+        "Smaller models (8B/70B local) reduce latency and cost but require precise retrieval context",
+        "Larger context windows increase input token costs and TTFT latency while reducing need for aggressive chunking",
+        "Multi-stage retrieval (vector search + reranking) adds ~100ms latency but significantly improves answer accuracy"
+      ]
+    }
+  }
+]

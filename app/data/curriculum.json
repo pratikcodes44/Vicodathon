@@ -1,0 +1,383 @@
+[
+  {
+    "day": 1,
+    "module_no": 1,
+    "module_title": "Foundations & Environment Setup",
+    "title": "Environment Setup & Tooling",
+    "day_type": "BUILD",
+    "tools": ["Git", "Python", "VS Code", "CLI"],
+    "objectives": [
+      "Set up development environment and Python virtual environments",
+      "Configure Git, SSH keys, and CLI developer tools"
+    ]
+  },
+  {
+    "day": 2,
+    "module_no": 1,
+    "module_title": "Foundations & Environment Setup",
+    "title": "Python for AI Development",
+    "day_type": "BUILD",
+    "tools": ["Python", "Virtualenv", "Pip", "Pytest"],
+    "objectives": [
+      "Master Python data structures and type hinting for AI",
+      "Write modular Python packages and unit tests"
+    ]
+  },
+  {
+    "day": 3,
+    "module_no": 2,
+    "module_title": "Data Engineering & Pipelines",
+    "title": "Data Loading & Exploration",
+    "day_type": "BUILD",
+    "tools": ["Pandas", "NumPy", "Python"],
+    "objectives": [
+      "Load unstructured textual data and structured datasets",
+      "Perform exploratory data analysis and data profiling"
+    ]
+  },
+  {
+    "day": 4,
+    "module_no": 2,
+    "module_title": "Data Engineering & Pipelines",
+    "title": "Data Cleaning & Transformation",
+    "day_type": "BUILD",
+    "tools": ["Pandas", "Regex", "Python"],
+    "objectives": [
+      "Clean noisy text data and strip HTML/markdown tags",
+      "Transform raw data into standardized formats for indexing"
+    ]
+  },
+  {
+    "day": 5,
+    "module_no": 2,
+    "module_title": "Data Engineering & Pipelines",
+    "title": "ETL Pipeline Design",
+    "day_type": "BUILD",
+    "tools": ["Python", "SQLAlchemy", "SQLite"],
+    "objectives": [
+      "Design scalable chunking and extraction pipelines",
+      "Store structured metadata into SQLite database schema"
+    ]
+  },
+  {
+    "day": 6,
+    "module_no": 2,
+    "module_title": "Data Engineering & Pipelines",
+    "title": "Data Pipeline Ship-It Project",
+    "day_type": "SHIP_IT",
+    "tools": ["Python", "Pandas", "SQLite", "Click"],
+    "objectives": [
+      "Build an end-to-end automated data ingestion CLI",
+      "Validate data integrity and document processing throughput"
+    ]
+  },
+  {
+    "day": 7,
+    "module_no": 3,
+    "module_title": "Embeddings & Vector Search",
+    "title": "Embeddings Explained",
+    "day_type": "AI_CORE",
+    "tools": ["Sentence Transformers", "OpenAI Embeddings", "Scikit-learn", "Matplotlib"],
+    "objectives": [
+      "Generate embeddings for knowledge-base chunks",
+      "Visualize embedding clusters using PCA",
+      "Analyze semantic clustering"
+    ]
+  },
+  {
+    "day": 8,
+    "module_no": 3,
+    "module_title": "Embeddings & Vector Search",
+    "title": "Vector Databases & Indexing",
+    "day_type": "BUILD",
+    "tools": ["ChromaDB", "FAISS", "Python"],
+    "objectives": [
+      "Set up a vector database",
+      "Index document embeddings",
+      "Perform similarity search"
+    ]
+  },
+  {
+    "day": 9,
+    "module_no": 3,
+    "module_title": "Embeddings & Vector Search",
+    "title": "Semantic Search Strategies",
+    "day_type": "BUILD",
+    "tools": ["ChromaDB", "FAISS", "Python", "NumPy"],
+    "objectives": [
+      "Implement cosine and dot product similarity metrics",
+      "Apply metadata filtering to search query results"
+    ]
+  },
+  {
+    "day": 10,
+    "module_no": 3,
+    "module_title": "Embeddings & Vector Search",
+    "title": "The Retrieval & Matching Engine",
+    "day_type": "SHIP_IT",
+    "tools": ["SQLite", "ChromaDB", "Python"],
+    "objectives": [
+      "Route queries between SQL, vector or hybrid retrieval",
+      "Merge/deduplicate results",
+      "Evaluate retrieval accuracy"
+    ]
+  },
+  {
+    "day": 11,
+    "module_no": 4,
+    "module_title": "LLM Core, Prompting & Fine-Tuning",
+    "title": "LLM Fundamentals & API Integration",
+    "day_type": "AI_CORE",
+    "tools": ["OpenAI API", "Anthropic API", "Python"],
+    "objectives": [
+      "Understand LLM architectures and tokenization",
+      "Integrate foundation model APIs securely"
+    ]
+  },
+  {
+    "day": 12,
+    "module_no": 4,
+    "module_title": "LLM Core, Prompting & Fine-Tuning",
+    "title": "Prompt Engineering Basics",
+    "day_type": "BUILD",
+    "tools": ["Python", "OpenAI API", "Prompt Templates"],
+    "objectives": [
+      "Craft effective zero-shot and few-shot prompts",
+      "Optimize context window utilization and response consistency"
+    ]
+  },
+  {
+    "day": 13,
+    "module_no": 4,
+    "module_title": "LLM Core, Prompting & Fine-Tuning",
+    "title": "Advanced Prompting: Function Calling & Structured Outputs",
+    "day_type": "BUILD",
+    "tools": ["OpenAI Function Calling", "Pydantic", "Python"],
+    "objectives": [
+      "Define tool schemas",
+      "Validate structured outputs",
+      "Log tool calls"
+    ]
+  },
+  {
+    "day": 14,
+    "module_no": 4,
+    "module_title": "LLM Core, Prompting & Fine-Tuning",
+    "title": "Fine-Tuning Foundations",
+    "day_type": "AI_CORE",
+    "tools": ["Hugging Face", "LoRA", "PyTorch", "Python"],
+    "objectives": [
+      "Prepare instruction tuning dataset for fine-tuning",
+      "Configure parameter-efficient fine-tuning (LoRA) hyper-parameters"
+    ]
+  },
+  {
+    "day": 15,
+    "module_no": 4,
+    "module_title": "LLM Core, Prompting & Fine-Tuning",
+    "title": "Fine-Tuning Ship-It",
+    "day_type": "SHIP_IT",
+    "tools": ["Hugging Face", "PEFT", "Python", "W&B"],
+    "objectives": [
+      "Train and evaluate fine-tuned LLM model",
+      "Deploy fine-tuned adapter weights for inference"
+    ]
+  },
+  {
+    "day": 16,
+    "module_no": 5,
+    "module_title": "Backend & Full-Stack AI",
+    "title": "API Design for AI Services",
+    "day_type": "BUILD",
+    "tools": ["FastAPI", "Pydantic", "Uvicorn", "Python"],
+    "objectives": [
+      "Design RESTful endpoints for LLM streaming",
+      "Implement request and response schema validation"
+    ]
+  },
+  {
+    "day": 17,
+    "module_no": 5,
+    "module_title": "Backend & Full-Stack AI",
+    "title": "Database Integration & Persistence",
+    "day_type": "BUILD",
+    "tools": ["PostgreSQL", "SQLAlchemy", "Alembic", "Python"],
+    "objectives": [
+      "Store conversation sessions and chat history",
+      "Design database schemas for AI execution state"
+    ]
+  },
+  {
+    "day": 18,
+    "module_no": 5,
+    "module_title": "Backend & Full-Stack AI",
+    "title": "Frontend Integration",
+    "day_type": "BUILD",
+    "tools": ["React", "TypeScript", "Tailwind CSS", "Fetch API"],
+    "objectives": [
+      "Connect UI chat components to backend endpoints",
+      "Handle Server-Sent Events (SSE) for token streaming"
+    ]
+  },
+  {
+    "day": 19,
+    "module_no": 5,
+    "module_title": "Backend & Full-Stack AI",
+    "title": "Deployment Basics",
+    "day_type": "BUILD",
+    "tools": ["Docker", "FastAPI", "Uvicorn", "Python"],
+    "objectives": [
+      "Containerize backend and frontend applications",
+      "Configure multi-stage Docker builds and environment variables"
+    ]
+  },
+  {
+    "day": 20,
+    "module_no": 5,
+    "module_title": "Backend & Full-Stack AI",
+    "title": "Full-Stack AI Ship-It",
+    "day_type": "SHIP_IT",
+    "tools": ["FastAPI", "React", "Docker", "PostgreSQL"],
+    "objectives": [
+      "Assemble full-stack interactive AI application",
+      "Deploy application stack using Docker Compose"
+    ]
+  },
+  {
+    "day": 21,
+    "module_no": 6,
+    "module_title": "Agentic AI & MCP",
+    "title": "Agent Fundamentals & Tool Use",
+    "day_type": "AI_CORE",
+    "tools": ["LangChain", "Python", "OpenAI API"],
+    "objectives": [
+      "Understand agent loops and ReAct reasoning framework",
+      "Equip agents with custom tools and execute function calls"
+    ]
+  },
+  {
+    "day": 22,
+    "module_no": 6,
+    "module_title": "Agentic AI & MCP",
+    "title": "Multi-Agent Orchestration",
+    "day_type": "BUILD",
+    "tools": ["CrewAI", "LangGraph", "Python"],
+    "objectives": [
+      "Create specialist agents",
+      "Build a router agent",
+      "Compare multi-agent vs single-agent"
+    ]
+  },
+  {
+    "day": 23,
+    "module_no": 6,
+    "module_title": "Agentic AI & MCP",
+    "title": "Model Context Protocol (MCP)",
+    "day_type": "BUILD",
+    "tools": ["MCP Python SDK", "Claude Desktop", "Cline", "Python"],
+    "objectives": [
+      "Build an MCP server",
+      "Expose multiple tools",
+      "Verify live tool execution"
+    ]
+  },
+  {
+    "day": 24,
+    "module_no": 6,
+    "module_title": "Agentic AI & MCP",
+    "title": "Agent Ship-It Project",
+    "day_type": "SHIP_IT",
+    "tools": ["LangGraph", "MCP Python SDK", "CrewAI", "Python"],
+    "objectives": [
+      "Build an autonomous multi-agent assistant system",
+      "Implement robust agent fallback routing and human-in-the-loop validation"
+    ]
+  },
+  {
+    "day": 25,
+    "module_no": 7,
+    "module_title": "Evaluation, Security & Deployment",
+    "title": "Evaluation Metrics & Testing",
+    "day_type": "AI_CORE",
+    "tools": ["Ragas", "TruLens", "Python", "Pytest"],
+    "objectives": [
+      "Define evaluation metrics for retrieval and generation",
+      "Run automated test suites for LLM output quality"
+    ]
+  },
+  {
+    "day": 26,
+    "module_no": 7,
+    "module_title": "Evaluation, Security & Deployment",
+    "title": "CI/CD for AI Applications",
+    "day_type": "BUILD",
+    "tools": ["GitHub Actions", "Docker", "Pytest", "Python"],
+    "objectives": [
+      "Configure automated CI/CD build pipelines",
+      "Integrate automated evaluation checks into release workflow"
+    ]
+  },
+  {
+    "day": 27,
+    "module_no": 7,
+    "module_title": "Evaluation, Security & Deployment",
+    "title": "Security, Privacy & Guardrails",
+    "day_type": "BUILD",
+    "tools": ["FastAPI", "Python", "Authentication", "Input Validation"],
+    "objectives": [
+      "Validate and sanitize inputs",
+      "Implement prompt-injection safeguards",
+      "Test security scenarios"
+    ]
+  },
+  {
+    "day": 28,
+    "module_no": 7,
+    "module_title": "Evaluation, Security & Deployment",
+    "title": "Containerization & Deployment",
+    "day_type": "BUILD",
+    "tools": ["Docker", "Docker Compose", "Nginx", "Python"],
+    "objectives": [
+      "Optimize multi-stage Docker containers for production",
+      "Deploy Nginx reverse proxy with SSL and rate limiting"
+    ]
+  },
+  {
+    "day": 29,
+    "module_no": 7,
+    "module_title": "Evaluation, Security & Deployment",
+    "title": "Monitoring, Logging & Observability",
+    "day_type": "BUILD",
+    "tools": ["Python Logging", "Prometheus", "Grafana"],
+    "objectives": [
+      "Set up structured logging",
+      "Expose service metrics",
+      "Separate model failure from retrieval/tool failure"
+    ]
+  },
+  {
+    "day": 30,
+    "module_no": 8,
+    "module_title": "Production & Capstone",
+    "title": "Production Architecture & Scaling",
+    "day_type": "BUILD",
+    "tools": ["Kubernetes", "Redis", "FastAPI", "Load Balancer"],
+    "objectives": [
+      "Design scalable production AI architecture",
+      "Implement Redis caching layer for frequent queries"
+    ]
+  },
+  {
+    "day": 31,
+    "module_no": 8,
+    "module_title": "Production & Capstone",
+    "title": "Capstone Project & Final Demo",
+    "day_type": "CAPSTONE",
+    "tools": ["FastAPI", "React", "LangChain", "MCP", "Docker", "Kubernetes"],
+    "objectives": [
+      "Demonstrate the complete system",
+      "Present production architecture",
+      "Evaluate real-world scenarios"
+    ]
+  }
+]

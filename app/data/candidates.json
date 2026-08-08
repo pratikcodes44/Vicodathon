@@ -1,0 +1,104 @@
+[
+  {
+    "member": {
+      "id": "CAND-018",
+      "name": "Diane Foster",
+      "jobRole": "AI Engineer",
+      "yearsExperience": 4,
+      "education": "MS Computer Science",
+      "memberStatus": "COMPLETED"
+    },
+    "missions": [
+      {"day": 7, "title": "Embeddings Explained", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 10, "title": "The Retrieval & Matching Engine", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 13, "title": "Advanced Prompting: Function Calling & Structured Outputs", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 22, "title": "Multi-Agent Orchestration", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 27, "title": "Security, Privacy & Guardrails", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 31, "title": "Capstone Project & Final Demo", "passed": true, "skipped": false, "attempts": 1}
+    ],
+    "signals": {"commitDays": 31, "missionsCompleted": 31, "missionsFirstTry": 31}
+  },
+  {
+    "member": {
+      "id": "CAND-017",
+      "name": "Tyler Brooks",
+      "jobRole": "Junior Developer",
+      "yearsExperience": 0,
+      "education": "GED + Coding Bootcamp Certificate",
+      "memberStatus": "COMPLETED"
+    },
+    "missions": [
+      {"day": 7, "title": "Embeddings Explained", "passed": true, "skipped": false, "attempts": 5},
+      {"day": 13, "title": "Advanced Prompting: Function Calling & Structured Outputs", "passed": true, "skipped": false, "attempts": 4},
+      {"day": 22, "title": "Multi-Agent Orchestration", "passed": true, "skipped": false, "attempts": 5},
+      {"day": 31, "title": "Capstone Project & Final Demo", "passed": true, "skipped": false, "attempts": 3}
+    ],
+    "signals": {"commitDays": 30, "missionsCompleted": 31, "missionsFirstTry": 1}
+  },
+  {
+    "member": {
+      "id": "CAND-010",
+      "name": "Gerald Combs",
+      "jobRole": "IT Support Specialist",
+      "yearsExperience": 20,
+      "education": "AAS Information Technology",
+      "memberStatus": "COMPLETED"
+    },
+    "missions": [
+      {"day": 7, "title": "Embeddings Explained", "passed": true, "skipped": false, "attempts": 5},
+      {"day": 8, "title": "Vector Databases & Indexing", "passed": false, "skipped": false, "attempts": 4},
+      {"day": 10, "title": "The Retrieval & Matching Engine", "passed": false, "skipped": false, "attempts": 3},
+      {"day": 22, "title": "Multi-Agent Orchestration", "passed": false, "skipped": false, "attempts": 3},
+      {"day": 27, "title": "Security, Privacy & Guardrails", "passed": null, "skipped": true, "attempts": null},
+      {"day": 31, "title": "Capstone Project & Final Demo", "passed": true, "skipped": false, "attempts": 3}
+    ],
+    "signals": {"commitDays": 22, "missionsCompleted": 23, "missionsFirstTry": 1}
+  },
+  {
+    "member": {
+      "id": "CAND-011",
+      "name": "Mia Alvarez",
+      "jobRole": "Product Manager",
+      "yearsExperience": 3,
+      "education": "BA Business Administration",
+      "memberStatus": "COMPLETED"
+    },
+    "missions": [
+      {"day": 1, "title": "Environment Setup & Tooling", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 2, "title": "Python for AI Development", "passed": true, "skipped": false, "attempts": 2},
+      {"day": 3, "title": "Data Loading & Exploration", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 4, "title": "Data Cleaning & Transformation", "passed": true, "skipped": false, "attempts": 2},
+      {"day": 7, "title": "Embeddings Explained", "passed": null, "skipped": true, "attempts": null},
+      {"day": 8, "title": "Vector Databases & Indexing", "passed": null, "skipped": true, "attempts": null},
+      {"day": 13, "title": "Advanced Prompting", "passed": null, "skipped": true, "attempts": null},
+      {"day": 16, "title": "API Design for AI Services", "passed": null, "skipped": true, "attempts": null},
+      {"day": 22, "title": "Multi-Agent Orchestration", "passed": null, "skipped": true, "attempts": null},
+      {"day": 31, "title": "Capstone Project & Final Demo", "passed": true, "skipped": false, "attempts": 3}
+    ],
+    "signals": {"commitDays": 14, "missionsCompleted": 14, "missionsFirstTry": 5}
+  },
+  {
+    "member": {
+      "id": "CAND-015",
+      "name": "Noah Kim",
+      "jobRole": "Senior Solutions Architect",
+      "yearsExperience": 12,
+      "education": "MS Software Engineering",
+      "memberStatus": "COMPLETED"
+    },
+    "missions": [
+      {"day": 7, "title": "Embeddings Explained", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 10, "title": "The Retrieval & Matching Engine", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 13, "title": "Advanced Prompting: Function Calling & Structured Outputs", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 14, "title": "Fine-Tuning Foundations", "passed": null, "skipped": true, "attempts": null},
+      {"day": 15, "title": "Fine-Tuning Ship-It", "passed": null, "skipped": true, "attempts": null},
+      {"day": 22, "title": "Multi-Agent Orchestration", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 23, "title": "Model Context Protocol (MCP)", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 27, "title": "Security, Privacy & Guardrails", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 29, "title": "Monitoring, Logging & Observability", "passed": true, "skipped": false, "attempts": 1},
+      {"day": 31, "title": "Capstone Project & Final Demo", "passed": true, "skipped": false, "attempts": 1}
+    ],
+    "signals": {"commitDays": 29, "missionsCompleted": 29, "missionsFirstTry": 27}
+  }
+]
