@@ -132,8 +132,14 @@ export default function Home() {
       if (data.done) {
         if (data.feedback) {
           const fb = data.feedback;
-          const fbText = `INTERVIEW COMPLETED.\n\nSummary: ${fb.summary}\n\nStrengths: ${fb.strengths.join(", ")}\n\nGaps: ${fb.gaps.join(", ")}\n\nNext Steps: ${fb.next.join(", ")}`;
-          setChatHistory(prev => [...prev, { role: "agent", text: fbText }]);
+          setChatHistory(prev => [
+            ...prev,
+            { role: "agent", text: "INTERVIEW COMPLETED. FINAL FEEDBACK:" },
+            { role: "agent", text: `Summary: ${fb.summary}` },
+            { role: "agent", text: `Strengths: ${fb.strengths.join(", ")}` },
+            { role: "agent", text: `Gaps: ${fb.gaps.join(", ")}` },
+            { role: "agent", text: `Next Steps: ${fb.next.join(", ")}` }
+          ]);
         }
         setIsDone(true);
       }
