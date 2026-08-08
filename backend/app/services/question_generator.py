@@ -5,7 +5,7 @@ from app.models.interview import GeneratedQuestion, DifficultyLevel, QuestionKin
 from app.services.llm_service import generate_question as _llm_generate
 
 
-def generate_question(
+async def generate_question(
     day: int,
     objectives: list[str],
     tools: list[str],
@@ -21,7 +21,7 @@ def generate_question(
     The gateway handles multi-provider failover and deterministic fallback
     from fallback_questions.json if all providers fail.
     """
-    return _llm_generate(
+    return await _llm_generate(
         day=day,
         objectives=objectives,
         tools=tools,

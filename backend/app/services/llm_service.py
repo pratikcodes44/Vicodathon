@@ -70,16 +70,16 @@ def _provider_order() -> list[str]:
 
 def _get_client_and_model(provider: str) -> tuple[Any, str]:
     """Return an OpenAI-compatible client and model name for the provider."""
+    from openai import AsyncOpenAI
+
     if provider == "ollama":
-        from openai import OpenAI
-        client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
-        return client, "mistral:latest"
+        client = AsyncOpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
+        return client, "llama3.1"
 
     elif provider == "groq":
         if not GROQ_API_KEY:
             raise ValueError("GROQ_API_KEY not set")
-        from openai import OpenAI
-        client = OpenAI(
+        client = AsyncOpenAI(
             api_key=GROQ_API_KEY,
             base_url="https://api.groq.com/openai/v1",
         )
@@ -88,15 +88,13 @@ def _get_client_and_model(provider: str) -> tuple[Any, str]:
     elif provider == "openai":
         if not OPENAI_API_KEY:
             raise ValueError("OPENAI_API_KEY not set")
-        from openai import OpenAI
-        client = OpenAI(api_key=OPENAI_API_KEY)
+        client = AsyncOpenAI(api_key=OPENAI_API_KEY)
         return client, OPENAI_MODEL
 
     elif provider == "gemini":
         if not GEMINI_API_KEY:
             raise ValueError("GEMINI_API_KEY not set")
-        from openai import OpenAI
-        client = OpenAI(
+        client = AsyncOpenAI(
             api_key=GEMINI_API_KEY,
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
         )
@@ -109,7 +107,7 @@ def _get_client_and_model(provider: str) -> tuple[Any, str]:
 # Core LLM call with multi-provider failover
 # ═══════════════════════════════════════════════════════════════════════════
 
-def _call_llm_structured(
+async def _call_llm_structured(
     system_prompt: str,
     user_prompt: str,
     response_model: type[BaseModel],
@@ -136,7 +134,7 @@ def _call_llm_structured(
 
                 # Try structured parse first (OpenAI native)
                 try:
-                    response = client.beta.chat.completions.parse(
+                    response = await client.beta.chat.completions.parse(
                         model=model,
                         messages=[
                             {"role": "system", "content": system_prompt},
@@ -165,7 +163,7 @@ def _call_llm_structured(
                         f"{json.dumps(schema_json, indent=2)}"
                     )
                     
-                    response = client.chat.completions.create(
+                    response = await client.chat.completions.create(
                         model=model,
                         messages=[
                             {"role": "system", "content": full_system_prompt},
@@ -185,7 +183,7 @@ def _call_llm_structured(
                     return result
 
                 # Fallback: plain JSON mode + manual parse
-                response = client.chat.completions.create(
+                response = await client.chat.completions.create(
                     model=model,
                     messages=[
                         {"role": "system", "content": system_prompt},
@@ -214,7 +212,7 @@ def _call_llm_structured(
 # Public API: evaluate_answer
 # ═══════════════════════════════════════════════════════════════════════════
 
-def evaluate_answer(
+async def evaluate_answer(
     candidate_answer: str,
     context_summary: str,
     curriculum_objectives: list[str],
@@ -250,7 +248,7 @@ Provide your evaluation as JSON with these fields:
 - follow_up_focus (str): specific topic for follow-up
 - recommended_next_difficulty (str): one of FOUNDATION, APPLIED, SYSTEMS
 """
-    result = _call_llm_structured(
+    result = await _call_llm_structured(
         system_prompt=system_prompt,
         user_prompt=user_prompt,
         response_model=AnswerEvaluation,
@@ -279,7 +277,7 @@ Provide your evaluation as JSON with these fields:
 # Public API: generate_question
 # ═══════════════════════════════════════════════════════════════════════════
 
-def generate_question(
+async def generate_question(
     day: int,
     objectives: list[str],
     tools: list[str],
@@ -316,7 +314,7 @@ Respond as JSON with:
 - difficulty (str): {difficulty.value}
 - question_kind (str): {question_kind.value}
 """
-    result = _call_llm_structured(
+    result = await _call_llm_structured(
         system_prompt=system_prompt,
         user_prompt=user_prompt,
         response_model=GeneratedQuestion,
@@ -351,7 +349,7 @@ Respond as JSON with:
 # Public API: compose_final_feedback
 # ═══════════════════════════════════════════════════════════════════════════
 
-def compose_final_feedback(
+async def compose_final_feedback(
     candidate_role: str,
     turns: list[InterviewTurn],
 ) -> GeneratedFeedback:
@@ -380,7 +378,7 @@ Synthesize final feedback as JSON with:
 - gaps (list[str]): knowledge gaps from weak answers
 - next (list[str]): actionable recommendations for future learning
 """
-    result = _call_llm_structured(
+    result = await _call_llm_structured(
         system_prompt=system_prompt,
         user_prompt=user_prompt,
         response_model=GeneratedFeedback,

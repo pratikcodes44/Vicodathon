@@ -302,7 +302,7 @@ async def interview(
     objectives = current_cd.objectives if current_cd else []
     tools = current_cd.tools if current_cd else []
     
-    evaluation = evaluate_answer(
+    evaluation = await evaluate_answer(
         candidate_answer=request.message,
         context_summary="",  # Mock context summary
         curriculum_objectives=objectives,
@@ -376,7 +376,7 @@ async def interview(
         # Get all turns to compose feedback
         all_turns = pydantic_session.turns
         
-        generated_feedback = compose_final_feedback(
+        generated_feedback = await compose_final_feedback(
             candidate_role=candidate_role,
             turns=all_turns
         )
@@ -400,7 +400,7 @@ async def interview(
 
     candidate_role = candidate_dict.get("member", {}).get("jobRole", "professional")
     
-    generated_q = generate_question(
+    generated_q = await generate_question(
         day=next_day,
         objectives=n_objectives,
         tools=n_tools,
