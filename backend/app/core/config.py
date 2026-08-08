@@ -54,7 +54,7 @@ TOTAL_CURRICULUM_DAYS = 31
 # LLM settings — multi-provider
 # ---------------------------------------------------------------------------
 
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "ollama")  # ollama | groq | openai | gemini | fallback
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "nvidia")  # nvidia | groq | openai | gemini | fallback
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")

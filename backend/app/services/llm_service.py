@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 
 def _provider_order() -> list[str]:
     """Return the ordered list of providers to attempt, primary first."""
-    all_providers = ["ollama", "groq", "openai", "gemini"]
+    all_providers = ["nvidia", "groq", "openai", "gemini"]
     primary = LLM_PROVIDER.lower()
     if primary == "fallback":
         return []
@@ -68,13 +68,26 @@ def _provider_order() -> list[str]:
     return ordered
 
 
-def _get_client_and_model(provider: str) -> tuple[Any, str]:
+def _get_client_and_model(provider: str, response_model: type[BaseModel] | None = None) -> tuple[Any, str]:
     """Return an OpenAI-compatible client and model name for the provider."""
     from openai import AsyncOpenAI
+    import os
 
-    if provider == "ollama":
-        client = AsyncOpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
-        return client, "llama3.1"
+    if provider == "nvidia":
+        api_key = os.getenv("NVIDIA_API_KEY")
+        if not api_key:
+            raise ValueError("NVIDIA_API_KEY not set. Please set it to use the NVIDIA API.")
+        client = AsyncOpenAI(
+            base_url="https://integrate.api.nvidia.com/v1",
+            api_key=api_key,
+        )
+        
+        # Route models based on the required task (response_model type)
+        if response_model and response_model.__name__ == "GeneratedQuestion":
+            model = "meta/llama-3.1-8b-instruct"
+        else:
+            model = "meta/llama-3.1-70b-instruct"
+        return client, model
 
     elif provider == "groq":
         if not GROQ_API_KEY:
@@ -127,7 +140,7 @@ async def _call_llm_structured(
     for provider in providers:
         for attempt in range(1, LLM_MAX_RETRIES + 1):
             try:
-                client, model = _get_client_and_model(provider)
+                client, model = _get_client_and_model(provider, response_model)
                 logger.debug(
                     "LLM call: provider=%s model=%s attempt=%d", provider, model, attempt
                 )
@@ -150,9 +163,9 @@ async def _call_llm_structured(
                 except (AttributeError, TypeError):
                     pass
 
-                if provider == "ollama":
+                if provider == "nvidia":
                     import time
-                    print(f"\n[MISTRAL LIVE] 🚀 Dispatching prompt to model: '{model}'")
+                    print(f"\n[NVIDIA NIM] 🚀 Dispatching prompt to model: '{model}'")
                     start_time = time.time()
                     
                     schema_json = response_model.model_json_schema()
@@ -174,7 +187,7 @@ async def _call_llm_structured(
                     )
                     
                     elapsed = round(time.time() - start_time, 2)
-                    print(f"[MISTRAL LIVE] ✅ Response generated in {elapsed}s using {model}\n")
+                    print(f"[NVIDIA NIM] ✅ Response generated in {elapsed}s using {model}\n")
                     
                     raw_json = response.choices[0].message.content
                     parsed = json.loads(raw_json)
