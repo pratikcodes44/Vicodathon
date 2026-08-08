@@ -8,6 +8,7 @@ export interface InterviewFeedback {
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export const sendInterviewTurn = async (_sessionId: string, payload: Record<string, unknown>) => {
+  console.log("[API Outgoing Payload]", payload);
   try {
     const response = await fetch(`${API_BASE}/api/interview`, {
       method: "POST",

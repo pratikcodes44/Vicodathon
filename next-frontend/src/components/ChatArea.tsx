@@ -56,8 +56,8 @@ export function ChatArea({ sessionId, onComplete }: { sessionId: string | null, 
 
     try {
       const apiResponse = await sendInterviewTurn(sessionId, { 
-        text: userText,
-        history: messages.map(m => ({ role: m.sender === "candidate" ? "user" : "assistant", content: m.content }))
+        sessionId: sessionId,
+        message: userText
       });
 
       if (apiResponse.done) {
