@@ -27,6 +27,11 @@ class InterviewSessionModel(Base):
     turns_in_current_day = Column(Integer, default=0, nullable=False)
     total_questions = Column(Integer, default=0, nullable=False)
     status = Column(String, nullable=False, default="ACTIVE")
+    
+    # Cumulative metrics
+    score_communication = Column(Integer, nullable=False, default=0)
+    score_technical = Column(Integer, nullable=False, default=0)
+    score_problem_solving = Column(Integer, nullable=False, default=0)
 
     # Relationship to turns
     turns = relationship("InterviewTurnModel", back_populates="session", cascade="all, delete-orphan", order_by="InterviewTurnModel.turn_no")

@@ -261,7 +261,10 @@ Topic Tools: {curriculum_tools}
 Candidate Answer: {candidate_answer}
 
 Provide your evaluation as JSON with these fields:
-- score (int 0-4): 0=no answer, 1=wrong, 2=partial, 3=good, 4=excellent
+- score (int 0-4): overall 0=no answer, 1=wrong, 2=partial, 3=good, 4=excellent
+- score_communication (int 0-4): score for clarity and communication
+- score_technical (int 0-4): score for technical depth and correctness
+- score_problem_solving (int 0-4): score for problem solving approach
 - correctness (str): assessment of factual correctness
 - depth (str): assessment of technical depth
 - communication (str): assessment of clarity
@@ -286,6 +289,9 @@ Provide your evaluation as JSON with these fields:
     logger.info("Using deterministic fallback for answer evaluation.")
     return AnswerEvaluation(
         score=2,
+        score_communication=2,
+        score_technical=2,
+        score_problem_solving=2,
         correctness="Unable to evaluate via LLM — using neutral fallback.",
         depth="Moderate depth assumed.",
         communication="Communication appears adequate.",

@@ -28,7 +28,7 @@ from app.models.interview import (
     InterviewTurn,
 )
 from app.models.feedback import InterviewFeedback
-from app.core.data_loader import get_curriculum_day
+from app.core.data_loader import get_curriculum_day, get_candidates
 from app.core.config import (
     WEIGHT_COMPLETION,
     WEIGHT_FIRST_TRY,
@@ -187,6 +187,9 @@ def _db_to_pydantic_session(db_session: InterviewSessionModel) -> InterviewSessi
         plan_index=db_session.plan_index,
         turns_in_current_day=db_session.turns_in_current_day,
         total_questions=db_session.total_questions,
+        score_communication=db_session.score_communication,
+        score_technical=db_session.score_technical,
+        score_problem_solving=db_session.score_problem_solving,
         turns=turns,
         # Mock final feedback if completed
         final_feedback=InterviewFeedback(
@@ -317,6 +320,9 @@ async def interview(
     # Update state
     db_session.total_questions += 1
     db_session.turns_in_current_day += 1
+    db_session.score_communication += evaluation.score_communication
+    db_session.score_technical += evaluation.score_technical
+    db_session.score_problem_solving += evaluation.score_problem_solving
     
     # State Machine Transition Rules
     if evaluation.score <= 1 and db_session.turns_in_current_day == 1:
@@ -404,3 +410,48 @@ async def interview(
     db.commit()
 
     return InterviewResponse(reply=next_question, done=False)
+
+
+@router.get("/api/candidates")
+async def list_candidates():
+    """Return a lightweight list of candidates for the frontend."""
+    candidates = get_candidates()
+    result = []
+    for cid, cand in candidates.items():
+        status = "Active Interview" if cid == "CAND-018" else "Scheduled"
+        result.append({
+            "id": cid,
+            "name": cand.member.name,
+            "jobRole": cand.member.jobRole,
+            "status": status
+        })
+    return result
+
+
+@router.get("/api/metrics/{session_id}")
+async def get_metrics(session_id: str, db: DBSession = Depends(get_db)):
+    """Return the current aggregated scores and status for the frontend."""
+    db_session = db.query(InterviewSessionModel).filter(InterviewSessionModel.session_id == session_id).first()
+    if not db_session:
+        raise HTTPException(status_code=404, detail="Session not found")
+        
+    candidate_turns = len([t for t in db_session.turns if t.role == "CANDIDATE"])
+    max_score = candidate_turns * 4
+    
+    if db_session.status == SessionStatus.COMPLETED.value:
+        summary_status = "Interview Completed"
+    elif candidate_turns == 0:
+        summary_status = "Not Started"
+    else:
+        summary_status = f"Interview in progress... (Question {db_session.total_questions})"
+        
+    return {
+        "score_communication": db_session.score_communication,
+        "score_technical": db_session.score_technical,
+        "score_problem_solving": db_session.score_problem_solving,
+        "max_score": max_score,
+        "summary_status": summary_status,
+        "total_questions": db_session.total_questions,
+        "candidate_turns": candidate_turns
+    }
+

@@ -205,6 +205,20 @@ class InterviewSession(BaseModel):
         description="Total questions asked (anchor + follow-up)",
     )
 
+    # ---- cumulative metrics ----
+    score_communication: int = Field(
+        default=0,
+        description="Cumulative communication score",
+    )
+    score_technical: int = Field(
+        default=0,
+        description="Cumulative technical score",
+    )
+    score_problem_solving: int = Field(
+        default=0,
+        description="Cumulative problem solving score",
+    )
+
     # ---- adaptive difficulty ----
     skill_prior: float = Field(
         default=0.5,
@@ -284,6 +298,24 @@ class AnswerEvaluation(BaseModel):
         ge=0,
         le=4,
         description="0-4 rubric score",
+    )
+    score_communication: int = Field(
+        ...,
+        ge=0,
+        le=4,
+        description="0-4 score for communication and clarity",
+    )
+    score_technical: int = Field(
+        ...,
+        ge=0,
+        le=4,
+        description="0-4 score for technical depth and correctness",
+    )
+    score_problem_solving: int = Field(
+        ...,
+        ge=0,
+        le=4,
+        description="0-4 score for problem solving approach",
     )
     correctness: str = Field(
         ...,
