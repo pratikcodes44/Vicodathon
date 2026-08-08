@@ -32,6 +32,7 @@ export default function Home() {
     max_score: 0,
     summary_status: "Select a candidate to begin"
   });
+  const [isDone, setIsDone] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
@@ -69,6 +70,7 @@ export default function Home() {
       max_score: 0,
       summary_status: "Starting interview..."
     });
+    setIsDone(false);
     setIsTyping(true);
 
     try {
@@ -97,6 +99,9 @@ export default function Home() {
         setChatHistory([{ role: "agent", text: data.reply }]);
         await fetchMetrics(newSessionId);
       }
+      if (data.done) {
+        setIsDone(true);
+      }
     } catch (err: any) {
       console.error("Fetch Error:", err.name, err.message);
     } finally {
@@ -124,6 +129,14 @@ export default function Home() {
       if (data.reply) {
         setChatHistory(prev => [...prev, { role: "agent", text: data.reply }]);
       }
+      if (data.done) {
+        if (data.feedback) {
+          const fb = data.feedback;
+          const fbText = `INTERVIEW COMPLETED.\n\nSummary: ${fb.summary}\n\nStrengths: ${fb.strengths.join(", ")}\n\nGaps: ${fb.gaps.join(", ")}\n\nNext Steps: ${fb.next.join(", ")}`;
+          setChatHistory(prev => [...prev, { role: "agent", text: fbText }]);
+        }
+        setIsDone(true);
+      }
       await fetchMetrics(activeSessionId);
     } catch (err: any) {
       console.error("Fetch Error:", err.name, err.message);
@@ -149,7 +162,7 @@ export default function Home() {
           <ChatArea 
             messages={chatHistory} 
             onSend={handleSendMessage} 
-            isTyping={isTyping} 
+            isTyping={isTyping || isDone} 
           />
         </div>
 
