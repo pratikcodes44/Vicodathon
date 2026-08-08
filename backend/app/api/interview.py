@@ -40,6 +40,7 @@ from app.services.candidate_analyzer import get_eligible_curriculum_days
 from app.services.answer_evaluator import evaluate_answer
 from app.services.followup_controller import adapt_follow_up
 from app.services.question_generator import generate_question
+from app.services.feedback_composer import compose_final_feedback
 from app.models.interview import FollowUpType
 logger = logging.getLogger(__name__)
 
@@ -334,7 +335,27 @@ async def interview(
             db_session.covered_days = db_session.covered_days + [next_day]
             db.add(db_session)
         else:
-            next_day = None
+            # Fallback: select an unvisited eligible day if we run out of planned days
+            eligible_days = get_eligible_curriculum_days(candidate_dict)
+            unvisited = [d for d in eligible_days if d not in db_session.covered_days]
+            if unvisited:
+                next_day = unvisited[0]
+                db_session.covered_days = db_session.covered_days + [next_day]
+                db.add(db_session)
+            else:
+                # If we run out of passed/eligible days, pick from other known missions (e.g. failed ones)
+                all_missions = candidate_dict.get("missions", [])
+                all_mission_days = [m.get("day") for m in all_missions if m.get("day") is not None]
+                unvisited_all = [d for d in all_mission_days if d not in db_session.covered_days]
+                
+                if unvisited_all:
+                    next_day = unvisited_all[0]
+                    db_session.covered_days = db_session.covered_days + [next_day]
+                    db.add(db_session)
+                else:
+                    # If truly out of all days, reuse the last day but escalate difficulty
+                    next_day = current_day
+
         question_kind = QuestionKind.ANCHOR
         follow_up_focus = ""
 
@@ -350,25 +371,18 @@ async def interview(
         db_session.status = SessionStatus.COMPLETED.value
         db.commit()
 
-        candidate_name = candidate_dict.get("member", {}).get("name", "Candidate")
-        feedback = InterviewFeedback(
-            summary=(
-                f"{candidate_name} demonstrated understanding across "
-                f"{len(db_session.covered_days)} curriculum areas with "
-                f"{db_session.question_count} questions answered."
-            ),
-            strengths=[
-                "Engaged thoughtfully with interview questions",
-                "Showed familiarity with core curriculum concepts",
-            ],
-            gaps=[
-                "Some responses lacked implementation-level depth",
-            ],
-            next=[
-                "Practice building end-to-end projects",
-                "Review advanced topics for deeper understanding",
-            ],
+        candidate_role = candidate_dict.get("member", {}).get("jobRole", "professional")
+        
+        # Get all turns to compose feedback
+        all_turns = pydantic_session.turns
+        
+        generated_feedback = compose_final_feedback(
+            candidate_role=candidate_role,
+            turns=all_turns
         )
+        
+        feedback = generated_feedback.to_feedback()
+        
         return InterviewResponse(
             reply="Thank you for completing this interview. Here is your feedback.",
             done=True,
