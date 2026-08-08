@@ -285,7 +285,8 @@ async def generate_question(
     difficulty: DifficultyLevel,
     question_kind: QuestionKind,
     candidate_role: str,
-    context_summary: str,
+    last_question: str = "",
+    last_answer: str = "",
     follow_up_focus: str = "",
 ) -> GeneratedQuestion:
     """
@@ -296,6 +297,11 @@ async def generate_question(
         "Generate natural, concise interview questions. "
         "You MUST respond with a JSON object matching the required schema."
     )
+    # Context Isolation: Include ONLY the immediate last question and answer if it's a follow-up
+    recent_context = ""
+    if question_kind != QuestionKind.ANCHOR and last_question and last_answer:
+        recent_context = f"Previous Question: {last_question}\nCandidate Answer: {last_answer}\n"
+
     user_prompt = f"""
 Generate an interview question for a {candidate_role}.
 
@@ -309,8 +315,8 @@ Topic Context (Day {day}):
 Difficulty Level: {difficulty.value}
 Question Kind: {question_kind.value}
 Follow-up Focus: {follow_up_focus or 'None'}
-Interview Context: {context_summary or 'Interview in progress.'}
 
+{recent_context}
 Respond as JSON with:
 - question_text (str, min 10 chars): the question to ask
 - curriculum_day (int): {day}

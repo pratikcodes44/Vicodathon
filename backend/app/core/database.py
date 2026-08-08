@@ -22,8 +22,10 @@ class InterviewSessionModel(Base):
 
     session_id = Column(String, primary_key=True, index=True)
     candidate_snapshot = Column(JSON, nullable=False)
-    question_count = Column(Integer, default=0, nullable=False)
-    covered_days = Column(JSON, nullable=False, default=list)
+    plan = Column(JSON, nullable=False, default=list)
+    plan_index = Column(Integer, default=0, nullable=False)
+    turns_in_current_day = Column(Integer, default=0, nullable=False)
+    total_questions = Column(Integer, default=0, nullable=False)
     status = Column(String, nullable=False, default="ACTIVE")
 
     # Relationship to turns

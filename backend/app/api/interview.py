@@ -110,7 +110,7 @@ def _build_interview_plan(candidate_profile_dict: dict) -> list[int]:
         if day not in planned:
             planned.append(day)
 
-    return planned
+    return planned[:4]
 
 
 # ---------------------------------------------------------------------------
@@ -175,11 +175,7 @@ def _db_to_pydantic_session(db_session: InterviewSessionModel) -> InterviewSessi
         ) for t in sorted(db_session.turns, key=lambda x: x.turn_no)
     ]
     
-    # Simple state recovery for the mock evaluator
-    # Assuming standard alternating turns:
-    current_day_index = len(db_session.covered_days)
-    if not db_session.covered_days and planned_days:
-        current_day_index = 1
+    # The remaining simple state recovery using the new queue logic is handled dynamically.
 
     return InterviewSession(
         session_id=db_session.session_id,
@@ -187,11 +183,10 @@ def _db_to_pydantic_session(db_session: InterviewSessionModel) -> InterviewSessi
         status=SessionStatus(db_session.status),
         skill_prior=skill_prior,
         current_difficulty=_difficulty_from_prior(skill_prior),
-        planned_days=planned_days,
-        question_count=db_session.question_count,
-        follow_up_count=db_session.question_count // 3,
-        covered_days=db_session.covered_days,
-        current_day_index=current_day_index,
+        plan=db_session.plan,
+        plan_index=db_session.plan_index,
+        turns_in_current_day=db_session.turns_in_current_day,
+        total_questions=db_session.total_questions,
         turns=turns,
         # Mock final feedback if completed
         final_feedback=InterviewFeedback(
@@ -241,15 +236,14 @@ async def interview(
         # Build interview plan and eligible days using the candidate analyzer
         planned_days = _build_interview_plan(candidate_dict)
         
-        # Initial covered day
-        covered_days = [planned_days[0]] if planned_days else []
-
         # Create session in DB
         db_session = InterviewSessionModel(
             session_id=session_id,
             candidate_snapshot=candidate_dict,
-            question_count=1,
-            covered_days=covered_days,
+            plan=planned_days,
+            plan_index=0,
+            turns_in_current_day=0,
+            total_questions=1,
             status=SessionStatus.ACTIVE.value
         )
         db.add(db_session)
@@ -321,51 +315,32 @@ async def interview(
     db.add(candidate_turn)
 
     # Update state
-    db_session.question_count += 1
+    db_session.total_questions += 1
+    db_session.turns_in_current_day += 1
     
-    # Limit each curriculum day to a maximum of 2 turns
-    current_day_interviewer_turns = sum(1 for t in db_session.turns if t.role == "INTERVIEWER" and t.curriculum_day == current_day)
-    if current_day_interviewer_turns >= 2:
-        evaluation.follow_up_needed = False
-        
-    # Determine next topic
-    if evaluation.follow_up_needed:
+    # State Machine Transition Rules
+    if evaluation.score <= 1 and db_session.turns_in_current_day == 1:
+        # Stay on current day for a follow-up
         next_day = current_day
-        question_kind = QuestionKind.FOLLOW_UP_CLARIFY if evaluation.follow_up_type == FollowUpType.CLARIFY else QuestionKind.FOLLOW_UP_SCENARIO
+        question_kind = QuestionKind.FOLLOW_UP_CLARIFY
         follow_up_focus = evaluation.follow_up_focus
     else:
-        # Enforce Day Rotation: filter out any days already present in session.covered_days
-        eligible_days = get_eligible_curriculum_days(candidate_dict)
-        unvisited = [d for d in eligible_days if d not in db_session.covered_days]
+        # Advance to next day
+        db_session.plan_index += 1
+        db_session.turns_in_current_day = 0
         
-        if unvisited:
-            next_day = unvisited[0]
+        if db_session.plan_index < len(db_session.plan):
+            next_day = db_session.plan[db_session.plan_index]
         else:
-            # Fallback: pick from other known missions (e.g. failed ones)
-            all_missions = candidate_dict.get("missions", [])
-            all_mission_days = [m.get("day") for m in all_missions if m.get("day") is not None]
-            unvisited_all = [d for d in all_mission_days if d not in db_session.covered_days]
+            next_day = None # Will trigger completion or fallback
             
-            if unvisited_all:
-                next_day = unvisited_all[0]
-            else:
-                # If truly out of all days, reuse the last day
-                next_day = current_day
-
-        # Append every newly asked curriculum day integer to session.covered_days
-        if next_day not in db_session.covered_days:
-            db_session.covered_days = db_session.covered_days + [next_day]
-            db.add(db_session)
-
         question_kind = QuestionKind.ANCHOR
         follow_up_focus = ""
 
+    db.add(db_session)
+
     # Reconstruct Pydantic session for gates evaluation
     pydantic_session = _db_to_pydantic_session(db_session)
-    
-    # Hack to increment follow_up_count for the mock if we actually did one
-    if evaluation.follow_up_needed:
-        pydantic_session.follow_up_count += 1
 
     # Check hard gates
     if pydantic_session.gates_met:
@@ -411,7 +386,8 @@ async def interview(
         difficulty=evaluation.recommended_next_difficulty if hasattr(evaluation, "recommended_next_difficulty") else DifficultyLevel.APPLIED,
         question_kind=question_kind,
         candidate_role=candidate_role,
-        context_summary="",
+        last_question=last_interviewer_content,
+        last_answer=request.message,
         follow_up_focus=follow_up_focus
     )
     next_question = generated_q.question_text

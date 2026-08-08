@@ -13,7 +13,8 @@ async def generate_question(
     difficulty: DifficultyLevel,
     question_kind: QuestionKind,
     candidate_role: str,
-    context_summary: str,
+    last_question: str = "",
+    last_answer: str = "",
     follow_up_focus: str = "",
 ) -> GeneratedQuestion:
     """
@@ -30,6 +31,7 @@ async def generate_question(
         difficulty=difficulty,
         question_kind=question_kind,
         candidate_role=candidate_role,
-        context_summary=context_summary,
+        last_question=last_question,
+        last_answer=last_answer,
         follow_up_focus=follow_up_focus,
     )

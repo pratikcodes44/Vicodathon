@@ -184,20 +184,25 @@ class InterviewSession(BaseModel):
         description="Current state-machine status",
     )
 
-    # ---- interview progress counters (hard gates) ----
-    question_count: int = Field(
+    # ---- strict queue state ----
+    plan: list[int] = Field(
+        default_factory=list,
+        description="Pre-planned curriculum days to cover in this interview",
+    )
+    plan_index: int = Field(
+        default=0,
+        ge=0,
+        description="Index into plan for the current topic",
+    )
+    turns_in_current_day: int = Field(
+        default=0,
+        ge=0,
+        description="Number of turns asked for the current plan_index",
+    )
+    total_questions: int = Field(
         default=0,
         ge=0,
         description="Total questions asked (anchor + follow-up)",
-    )
-    follow_up_count: int = Field(
-        default=0,
-        ge=0,
-        description="Number of response-driven follow-ups asked",
-    )
-    covered_days: list[int] = Field(
-        default_factory=list,
-        description="Distinct curriculum days covered by questions so far",
     )
 
     # ---- adaptive difficulty ----
@@ -210,17 +215,6 @@ class InterviewSession(BaseModel):
     current_difficulty: DifficultyLevel = Field(
         default=DifficultyLevel.APPLIED,
         description="Current adaptive difficulty level",
-    )
-
-    # ---- interview plan ----
-    planned_days: list[int] = Field(
-        default_factory=list,
-        description="Pre-planned curriculum days to cover in this interview",
-    )
-    current_day_index: int = Field(
-        default=0,
-        ge=0,
-        description="Index into planned_days for the current topic",
     )
 
     # ---- context for LLM ----
@@ -259,32 +253,10 @@ class InterviewSession(BaseModel):
         description="Persisted feedback for idempotent re-retrieval",
     )
 
-    # ---- hard gate helpers ------------------------------------------------
-
-    @property
-    def distinct_days_covered(self) -> int:
-        """Number of distinct curriculum days covered so far."""
-        return len(set(self.covered_days))
-
-    @property
-    def has_follow_up(self) -> bool:
-        """True if at least one response-driven follow-up has been asked."""
-        return self.follow_up_count >= 1
-
     @property
     def gates_met(self) -> bool:
-        """True when ALL hard completion gates are satisfied.
-
-        Gates:
-          1. question_count >= 8
-          2. distinct curriculum days covered >= 4
-          3. At least one response-driven follow-up occurred
-        """
-        return (
-            self.question_count >= 8
-            and self.distinct_days_covered >= 4
-            and self.has_follow_up
-        )
+        """True when ALL hard completion gates are satisfied."""
+        return self.plan_index >= len(self.plan) or self.total_questions >= 8
 
 
 # ═══════════════════════════════════════════════════════════════════════════

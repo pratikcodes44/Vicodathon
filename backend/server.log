@@ -86,3 +86,29 @@ INFO:     127.0.0.1:57278 - "POST /api/interview HTTP/1.1" 200 OK
 18:25:19 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
 18:25:19 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
 INFO:     127.0.0.1:47160 - "POST /api/interview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44598 - "POST /api/interview HTTP/1.1" 200 OK
+18:32:39 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:32:39 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+18:32:55 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:32:55 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+INFO:     127.0.0.1:37812 - "POST /api/interview HTTP/1.1" 200 OK
+18:34:39 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:34:39 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+18:34:53 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:34:53 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+INFO:     127.0.0.1:34980 - "POST /api/interview HTTP/1.1" 200 OK
+18:35:12 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:35:12 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+18:35:25 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:35:25 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+INFO:     127.0.0.1:49834 - "POST /api/interview HTTP/1.1" 200 OK
+18:35:44 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:35:44 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+18:35:57 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:35:57 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+INFO:     127.0.0.1:33280 - "POST /api/interview HTTP/1.1" 200 OK
+18:37:28 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:37:28 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+18:37:41 │ INFO     │ httpx │ HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+18:37:41 │ INFO     │ app.services.llm_service │ LLM call succeeded: provider=ollama model=llama3.1
+INFO:     127.0.0.1:46404 - "POST /api/interview HTTP/1.1" 200 OK
