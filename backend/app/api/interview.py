@@ -244,6 +244,22 @@ async def interview(
         candidate = request.candidate
         candidate_dict = candidate.model_dump(mode="json")
         
+        # If the frontend sent an empty missions array, look up the real
+        # candidate data from candidates.json using the member ID.
+        # This is the critical fix: the frontend only knows lightweight
+        # candidate info (id, name, role) but the plan builder needs the
+        # full missions array to determine eligible curriculum days.
+        if not candidate_dict.get("missions"):
+            stored_candidates = get_candidates()
+            stored = stored_candidates.get(candidate.member.id)
+            if stored:
+                candidate_dict = stored.model_dump(mode="json")
+                logger.info(
+                    "Enriched candidate %s from stored data (%d missions)",
+                    candidate.member.id,
+                    len(candidate_dict.get("missions", []))
+                )
+        
         # Build interview plan and eligible days using the candidate analyzer
         planned_days = _build_interview_plan(candidate_dict)
         
