@@ -323,38 +323,39 @@ async def interview(
     # Update state
     db_session.question_count += 1
     
+    # Limit each curriculum day to a maximum of 2 turns
+    current_day_interviewer_turns = sum(1 for t in db_session.turns if t.role == "INTERVIEWER" and t.curriculum_day == current_day)
+    if current_day_interviewer_turns >= 2:
+        evaluation.follow_up_needed = False
+        
     # Determine next topic
     if evaluation.follow_up_needed:
         next_day = current_day
         question_kind = QuestionKind.FOLLOW_UP_CLARIFY if evaluation.follow_up_type == FollowUpType.CLARIFY else QuestionKind.FOLLOW_UP_SCENARIO
         follow_up_focus = evaluation.follow_up_focus
     else:
-        next_day_index = len(db_session.covered_days)
-        if next_day_index < len(planned_days):
-            next_day = planned_days[next_day_index]
+        # Enforce Day Rotation: filter out any days already present in session.covered_days
+        eligible_days = get_eligible_curriculum_days(candidate_dict)
+        unvisited = [d for d in eligible_days if d not in db_session.covered_days]
+        
+        if unvisited:
+            next_day = unvisited[0]
+        else:
+            # Fallback: pick from other known missions (e.g. failed ones)
+            all_missions = candidate_dict.get("missions", [])
+            all_mission_days = [m.get("day") for m in all_missions if m.get("day") is not None]
+            unvisited_all = [d for d in all_mission_days if d not in db_session.covered_days]
+            
+            if unvisited_all:
+                next_day = unvisited_all[0]
+            else:
+                # If truly out of all days, reuse the last day
+                next_day = current_day
+
+        # Append every newly asked curriculum day integer to session.covered_days
+        if next_day not in db_session.covered_days:
             db_session.covered_days = db_session.covered_days + [next_day]
             db.add(db_session)
-        else:
-            # Fallback: select an unvisited eligible day if we run out of planned days
-            eligible_days = get_eligible_curriculum_days(candidate_dict)
-            unvisited = [d for d in eligible_days if d not in db_session.covered_days]
-            if unvisited:
-                next_day = unvisited[0]
-                db_session.covered_days = db_session.covered_days + [next_day]
-                db.add(db_session)
-            else:
-                # If we run out of passed/eligible days, pick from other known missions (e.g. failed ones)
-                all_missions = candidate_dict.get("missions", [])
-                all_mission_days = [m.get("day") for m in all_missions if m.get("day") is not None]
-                unvisited_all = [d for d in all_mission_days if d not in db_session.covered_days]
-                
-                if unvisited_all:
-                    next_day = unvisited_all[0]
-                    db_session.covered_days = db_session.covered_days + [next_day]
-                    db.add(db_session)
-                else:
-                    # If truly out of all days, reuse the last day but escalate difficulty
-                    next_day = current_day
 
         question_kind = QuestionKind.ANCHOR
         follow_up_focus = ""
