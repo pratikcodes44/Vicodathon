@@ -37,7 +37,7 @@ export default function Home() {
   useEffect(() => {
     const init = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/candidates");
+        const res = await fetch("/api/candidates");
         const data = await res.json();
         setCandidates(data);
       } catch (err: any) {
@@ -49,7 +49,7 @@ export default function Home() {
 
   const fetchMetrics = async (sessionId: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/metrics/${sessionId}`);
+      const res = await fetch(`/api/metrics/${sessionId}`);
       const data = await res.json();
       setMetrics(data);
     } catch (err: any) {
@@ -72,7 +72,7 @@ export default function Home() {
     setIsTyping(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/interview", {
+      const res = await fetch("/api/interview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -110,7 +110,7 @@ export default function Home() {
     setIsTyping(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/interview", {
+      const res = await fetch("/api/interview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
