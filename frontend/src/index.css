@@ -4,16 +4,25 @@
 
 @layer base {
   body {
-    @apply bg-background text-slate-200 font-sans tracking-tight antialiased selection:bg-ai-blue/30;
+    @apply bg-[#0f1015] text-slate-100 font-sans tracking-tight antialiased selection:bg-white/20;
     overflow-x: hidden;
   }
 }
 
 @layer utilities {
-  .glass-card {
-    @apply bg-surface/50 backdrop-blur-xl border border-border shadow-2xl;
+  .glass-panel {
+    @apply bg-white/10 backdrop-blur-3xl border border-white/20 shadow-2xl transition-all duration-300;
   }
+  
+  .glass-panel:hover {
+    @apply bg-white/15 border-white/30;
+  }
+
+  .glass-btn {
+    @apply relative flex items-center justify-center bg-white/10 backdrop-blur-3xl border border-white/20 font-medium tracking-wide text-white shadow-lg transition-all hover:bg-white/20 active:scale-95 active:bg-white/10;
+  }
+
   .glass-header {
-    @apply bg-background/70 backdrop-blur-2xl border-b border-border;
+    @apply font-semibold tracking-tight;
   }
 }

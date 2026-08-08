@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --font-anybody: var(--font-anybody);
+  --font-hanken: var(--font-hanken);
+  --font-jetbrains: var(--font-jetbrains);
+}
+
+@layer utilities {
+  .brutalist-card {
+    @apply bg-[#fcf8ff]/60 backdrop-blur-xl border-[3px] border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)];
+  }
+
+  .brutalist-header {
+    @apply font-anybody uppercase font-black;
+  }
+
+  .brutalist-data {
+    @apply font-jetbrains font-bold;
+  }
+}

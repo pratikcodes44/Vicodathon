@@ -36,10 +36,10 @@ export function ChatFeed({ messages, isTyping }: ChatFeedProps) {
           >
             <div
               className={cn(
-                "max-w-[85%] rounded-3xl p-4 text-[14px] leading-relaxed shadow-sm",
+                "max-w-[85%] rounded-[20px] p-4 text-[14px] font-medium leading-relaxed shadow-lg backdrop-blur-xl",
                 msg.role === "agent"
-                  ? "bg-gradient-to-br from-surface to-slate-900 border border-ai-blue/20 text-slate-200 rounded-bl-sm"
-                  : "bg-ai-blue/10 border border-ai-blue/30 text-white rounded-br-sm"
+                  ? "bg-white/10 border border-white/20 text-white rounded-tl-sm"
+                  : "bg-white/20 border border-white/30 text-white rounded-tr-sm"
               )}
             >
               {msg.text}
@@ -52,10 +52,10 @@ export function ChatFeed({ messages, isTyping }: ChatFeedProps) {
             animate={{ opacity: 1, y: 0 }}
             className="flex w-full justify-start"
           >
-            <div className="max-w-[85%] rounded-3xl bg-surface border border-border p-4 text-[14px] text-slate-400 rounded-bl-sm flex items-center gap-1.5 shadow-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: "0ms" }}></span>
-              <span className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: "150ms" }}></span>
-              <span className="h-1.5 w-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: "300ms" }}></span>
+            <div className="max-w-[85%] border-[3px] border-black bg-slate-200 p-4 text-[14px] flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <span className="h-2 w-2 bg-black animate-bounce" style={{ animationDelay: "0ms" }}></span>
+              <span className="h-2 w-2 bg-black animate-bounce" style={{ animationDelay: "150ms" }}></span>
+              <span className="h-2 w-2 bg-black animate-bounce" style={{ animationDelay: "300ms" }}></span>
             </div>
           </motion.div>
         )}

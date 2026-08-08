@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CandidateProfileStrip } from "../components/CandidateProfileStrip";
 import { LiveEvidenceStrip } from "../components/LiveEvidenceStrip";
 import { ChatFeed, type Message } from "../components/ChatFeed";
 import { ChatInput } from "../components/ChatInput";
 import { FinalScorecard } from "../components/FinalScorecard";
-import { mockApi, type InterviewFeedback } from "../lib/mockApi";
+import { sendInterviewTurn, type InterviewFeedback } from "../lib/api";
 import { AnimatePresence, motion } from "framer-motion";
 
 export function InterviewLayout() {
@@ -13,21 +13,39 @@ export function InterviewLayout() {
   const [questionCount, setQuestionCount] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const [feedback, setFeedback] = useState<InterviewFeedback | null>(null);
+  const sessionIdRef = useRef(crypto.randomUUID());
 
   // Initialize the first message
   useEffect(() => {
+    let ignore = false;
     const fetchInitial = async () => {
       setIsTyping(true);
-      const res = await mockApi.postInterview("start");
-      if (res.message) {
+      const res = await sendInterviewTurn(sessionIdRef.current, { 
+        sessionId: sessionIdRef.current, 
+        is_start: true,
+        candidate: {
+          member: {
+            id: "CAND-018",
+            name: "Diane Foster",
+            jobRole: "AI Engineer",
+            yearsExperience: 4,
+            education: "MS",
+            memberStatus: "COMPLETED"
+          },
+          missions: [],
+          signals: { commitDays: 31, missionsCompleted: 31, missionsFirstTry: 31 }
+        }
+      });
+      if (!ignore && res.reply) {
         setMessages([
-          { id: Date.now().toString(), role: "agent", text: res.message }
+          { id: Date.now().toString(), role: "agent", text: res.reply }
         ]);
         setQuestionCount(1);
       }
-      setIsTyping(false);
+      if (!ignore) setIsTyping(false);
     };
     fetchInitial();
+    return () => { ignore = true; };
   }, []);
 
   const handleSend = async (text: string) => {
@@ -39,12 +57,15 @@ export function InterviewLayout() {
     setIsTyping(true);
 
     try {
-      const res = await mockApi.postInterview(text);
+      const res = await sendInterviewTurn(sessionIdRef.current, { 
+        sessionId: sessionIdRef.current, 
+        message: text 
+      });
       
-      if (res.message && !res.done) {
+      if (res.reply && !res.done) {
         setMessages((prev) => [
           ...prev,
-          { id: (Date.now() + 1).toString(), role: "agent", text: res.message! }
+          { id: (Date.now() + 1).toString(), role: "agent", text: res.reply }
         ]);
         setQuestionCount((prev) => prev + 1);
       }
@@ -61,9 +82,9 @@ export function InterviewLayout() {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center bg-[#050608] overflow-x-hidden">
-      {/* Strict 390px mobile-first container */}
-      <main className="relative flex min-h-screen w-full max-w-[390px] flex-col border-x border-border bg-background shadow-2xl overflow-hidden">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden">
+      {/* Strict 390px mobile-first container with Apple Liquid Glass */}
+      <main className="relative flex h-[844px] w-full max-w-[390px] flex-col glass-panel rounded-[40px] overflow-hidden my-auto">
         <CandidateProfileStrip />
         <LiveEvidenceStrip questionCount={questionCount} />
         
