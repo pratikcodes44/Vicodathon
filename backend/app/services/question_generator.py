@@ -7,6 +7,7 @@ from app.services.llm_service import generate_question as _llm_generate
 
 async def generate_question(
     day: int,
+    title: str,
     objectives: list[str],
     tools: list[str],
     difficulty: DifficultyLevel,
@@ -23,6 +24,7 @@ async def generate_question(
     """
     return await _llm_generate(
         day=day,
+        title=title,
         objectives=objectives,
         tools=tools,
         difficulty=difficulty,

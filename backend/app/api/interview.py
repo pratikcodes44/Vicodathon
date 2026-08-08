@@ -393,9 +393,11 @@ async def interview(
     # ── GENERATE NEXT QUESTION ──
     if next_day:
         cd = get_curriculum_day(next_day)
+        n_title = cd.title if cd else f"Day {next_day}"
         n_objectives = cd.objectives if cd else []
         n_tools = cd.tools if cd else []
     else:
+        n_title = "General Topic"
         n_objectives, n_tools = [], []
         next_day = current_day or 1
 
@@ -403,6 +405,7 @@ async def interview(
     
     generated_q = await generate_question(
         day=next_day,
+        title=n_title,
         objectives=n_objectives,
         tools=n_tools,
         difficulty=evaluation.recommended_next_difficulty if hasattr(evaluation, "recommended_next_difficulty") else DifficultyLevel.APPLIED,

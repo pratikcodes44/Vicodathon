@@ -279,6 +279,7 @@ Provide your evaluation as JSON with these fields:
 
 async def generate_question(
     day: int,
+    title: str,
     objectives: list[str],
     tools: list[str],
     difficulty: DifficultyLevel,
@@ -298,7 +299,10 @@ async def generate_question(
     user_prompt = f"""
 Generate an interview question for a {candidate_role}.
 
+You MUST ask a question about {title} (Day {day}). Do NOT ask about previous topics.
+
 Topic Context (Day {day}):
+- Title: {title}
 - Objectives: {objectives}
 - Tools: {tools}
 
