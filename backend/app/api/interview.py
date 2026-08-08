@@ -250,7 +250,7 @@ async def interview(
             plan=planned_days,
             plan_index=0,
             turns_in_current_day=0,
-            total_questions=1,
+            total_questions=0,
             status=SessionStatus.ACTIVE.value
         )
         db.add(db_session)
@@ -355,7 +355,7 @@ async def interview(
     pydantic_session = _db_to_pydantic_session(db_session)
 
     # Check hard gates
-    if pydantic_session.gates_met:
+    if db_session.plan_index >= len(session_plan) or db_session.total_questions >= 8:
         db_session.status = SessionStatus.COMPLETED.value
         db.commit()
 
