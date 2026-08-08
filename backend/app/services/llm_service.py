@@ -80,14 +80,12 @@ def _get_client_and_model(provider: str, response_model: type[BaseModel] | None 
         client = AsyncOpenAI(
             base_url="https://integrate.api.nvidia.com/v1",
             api_key=api_key,
-            timeout=30.0,
+            timeout=45.0,
+            max_retries=0,
         )
         
         # Route models based on the required task (response_model type)
-        if response_model and response_model.__name__ == "GeneratedQuestion":
-            model = "meta/llama-3.1-8b-instruct"
-        else:
-            model = "meta/llama-3.1-70b-instruct"
+        model = "meta/llama-3.1-8b-instruct"
         return client, model
 
     elif provider == "groq":
@@ -96,7 +94,8 @@ def _get_client_and_model(provider: str, response_model: type[BaseModel] | None 
         client = AsyncOpenAI(
             api_key=GROQ_API_KEY,
             base_url="https://api.groq.com/openai/v1",
-            timeout=30.0,
+            timeout=45.0,
+            max_retries=0,
         )
         return client, GROQ_MODEL
 
@@ -105,7 +104,8 @@ def _get_client_and_model(provider: str, response_model: type[BaseModel] | None 
             raise ValueError("OPENAI_API_KEY not set")
         client = AsyncOpenAI(
             api_key=OPENAI_API_KEY,
-            timeout=30.0,
+            timeout=45.0,
+            max_retries=0,
         )
         return client, OPENAI_MODEL
 
@@ -115,7 +115,8 @@ def _get_client_and_model(provider: str, response_model: type[BaseModel] | None 
         client = AsyncOpenAI(
             api_key=GEMINI_API_KEY,
             base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-            timeout=30.0,
+            timeout=45.0,
+            max_retries=0,
         )
         return client, GEMINI_MODEL
 
