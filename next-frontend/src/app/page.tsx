@@ -77,6 +77,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sessionId: newSessionId,
+          candidateId: candidate.id,
           candidate: {
             member: {
               id: candidate.id,
@@ -115,6 +116,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sessionId: activeSessionId,
+          candidateId: selectedCandidate?.id,
           message: text
         })
       });

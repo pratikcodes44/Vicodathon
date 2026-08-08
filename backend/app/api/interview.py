@@ -111,7 +111,11 @@ def _build_interview_plan(candidate_profile_dict: dict) -> list[int]:
         if day not in planned:
             planned.append(day)
 
-    return planned[:4]
+    plan = planned[:4]
+    if not plan or len(plan) == 0:
+        plan = [7, 10, 13, 22]
+
+    return plan
 
 
 # ---------------------------------------------------------------------------
