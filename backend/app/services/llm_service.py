@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 
 def _provider_order() -> list[str]:
     """Return the ordered list of providers to attempt, primary first."""
-    all_providers = ["groq", "openai", "gemini"]
+    all_providers = ["ollama", "groq", "openai", "gemini"]
     primary = LLM_PROVIDER.lower()
     if primary == "fallback":
         return []
@@ -70,7 +70,12 @@ def _provider_order() -> list[str]:
 
 def _get_client_and_model(provider: str) -> tuple[Any, str]:
     """Return an OpenAI-compatible client and model name for the provider."""
-    if provider == "groq":
+    if provider == "ollama":
+        from openai import OpenAI
+        client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
+        return client, "mistral:latest"
+
+    elif provider == "groq":
         if not GROQ_API_KEY:
             raise ValueError("GROQ_API_KEY not set")
         from openai import OpenAI
@@ -146,6 +151,38 @@ def _call_llm_structured(
                         return result
                 except (AttributeError, TypeError):
                     pass
+
+                if provider == "ollama":
+                    import time
+                    print(f"\n[MISTRAL LIVE] 🚀 Dispatching prompt to model: '{model}'")
+                    start_time = time.time()
+                    
+                    schema_json = response_model.model_json_schema()
+                    full_system_prompt = (
+                        f"{system_prompt}\n\n"
+                        f"You are a strict JSON API. Output ONLY valid JSON matching the requested schema. "
+                        f"Do not include markdown headers, code block wrappers (```json), or introductory/outro text.\n"
+                        f"{json.dumps(schema_json, indent=2)}"
+                    )
+                    
+                    response = client.chat.completions.create(
+                        model=model,
+                        messages=[
+                            {"role": "system", "content": full_system_prompt},
+                            {"role": "user", "content": user_prompt},
+                        ],
+                        temperature=temperature,
+                        response_format={"type": "json_object"},
+                    )
+                    
+                    elapsed = round(time.time() - start_time, 2)
+                    print(f"[MISTRAL LIVE] ✅ Response generated in {elapsed}s using {model}\n")
+                    
+                    raw_json = response.choices[0].message.content
+                    parsed = json.loads(raw_json)
+                    result = response_model.model_validate(parsed)
+                    logger.info("LLM call succeeded (JSON mode): provider=%s model=%s", provider, model)
+                    return result
 
                 # Fallback: plain JSON mode + manual parse
                 response = client.chat.completions.create(
