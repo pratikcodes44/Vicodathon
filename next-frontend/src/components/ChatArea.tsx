@@ -5,15 +5,18 @@ import { BrutalistButton } from "./BrutalistButton";
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-export function ChatArea() {
-  const [messages, setMessages] = useState<{role: "agent"|"candidate", text: string}[]>([
-    { role: "agent", text: "Welcome Diane. We are going to assess your AI Engineering skills today." },
-  ]);
+interface ChatAreaProps {
+  messages: { role: "agent" | "candidate"; text: string }[];
+  onSend: (text: string) => void;
+  isTyping?: boolean;
+}
+
+export function ChatArea({ messages, onSend, isTyping = false }: ChatAreaProps) {
   const [input, setInput] = useState("");
 
   const handleSend = () => {
-    if (!input.trim()) return;
-    setMessages(prev => [...prev, { role: "candidate", text: input }]);
+    if (!input.trim() || isTyping) return;
+    onSend(input);
     setInput("");
   };
 
@@ -38,10 +41,12 @@ export function ChatArea() {
         <input 
           value={input}
           onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSend()}
           placeholder="TYPE MESSAGE..."
-          className="flex-1 border-[3px] border-black px-4 font-bold focus:outline-none focus:ring-0 shadow-inner bg-white h-12"
+          disabled={isTyping}
+          className="flex-1 border-[3px] border-black px-4 font-bold focus:outline-none focus:ring-0 shadow-inner bg-white h-12 disabled:opacity-50"
         />
-        <BrutalistButton onClick={handleSend} className="h-12 flex items-center justify-center">
+        <BrutalistButton onClick={handleSend} disabled={isTyping} className="h-12 flex items-center justify-center disabled:opacity-50">
           SEND
         </BrutalistButton>
       </div>
