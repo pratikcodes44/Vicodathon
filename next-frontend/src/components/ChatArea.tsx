@@ -61,6 +61,9 @@ export function ChatArea({ sessionId, onComplete }: { sessionId: string | null, 
       });
 
       if (apiResponse.done) {
+        const agentMsg = { session_id: sessionId, sender: "interviewer", content: apiResponse.reply || "Thank you for your time. The interview is now complete." };
+        setMessages(prev => [...prev, agentMsg]);
+        await supabase.from("chat_messages").insert(agentMsg);
         // Backend handles scorecard creation, we just trigger complete
         onComplete();
       } else {
