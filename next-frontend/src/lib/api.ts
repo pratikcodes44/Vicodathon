@@ -5,10 +5,7 @@ export interface InterviewFeedback {
   next: string[];
 }
 
-// We use an empty string so fetch() uses relative paths (e.g. /api/interview)
-// Next.js rewrites (next.config.ts) will proxy this to the actual backend URL.
-// This completely avoids CORS issues.
-const API_BASE = "";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export const sendInterviewTurn = async (_sessionId: string, payload: Record<string, unknown>) => {
   console.log("[API] Base URL:", API_BASE);
