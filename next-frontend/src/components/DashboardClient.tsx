@@ -8,15 +8,17 @@ import { useState } from "react";
 export function DashboardClient({ candidates }: { candidates: any[] }) {
   const [activeCandidateId, setActiveCandidateId] = useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleSelectCandidate = (candidateId: string, sessionId: string) => {
     setActiveCandidateId(candidateId);
     setActiveSessionId(sessionId);
+    setRefreshTrigger(0);
   };
 
   const handleComplete = () => {
-    // Optionally trigger a refresh or something if needed,
-    // ScorecardPanel listens to Supabase realtime so it will update automatically.
+    // Force scorecard to refresh manually
+    setRefreshTrigger(prev => prev + 1);
   };
 
   return (
@@ -42,6 +44,7 @@ export function DashboardClient({ candidates }: { candidates: any[] }) {
       <div className="col-span-12 lg:col-span-4">
         <ScorecardPanel 
           sessionId={activeSessionId}
+          refreshTrigger={refreshTrigger}
         />
       </div>
     </div>

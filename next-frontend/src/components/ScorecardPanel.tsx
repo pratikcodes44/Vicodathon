@@ -4,7 +4,7 @@ import { BrutalistCard } from "./BrutalistCard";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export function ScorecardPanel({ sessionId }: { sessionId: string | null }) {
+export function ScorecardPanel({ sessionId, refreshTrigger = 0 }: { sessionId: string | null, refreshTrigger?: number }) {
   const supabase = createClient();
   const [scorecard, setScorecard] = useState<any>(null);
   const [candidate, setCandidate] = useState<any>(null);
@@ -44,7 +44,8 @@ export function ScorecardPanel({ sessionId }: { sessionId: string | null }) {
 
     loadData();
 
-    // Subscribe to scorecard inserts for this session
+    // We still subscribe just in case they enable Realtime in the future,
+    // but we no longer strictly rely on it because of refreshTrigger.
     const channel = supabase.channel('scorecard_updates')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'scorecards', filter: `session_id=eq.${sessionId}` }, payload => {
         setScorecard(payload.new);
@@ -54,7 +55,7 @@ export function ScorecardPanel({ sessionId }: { sessionId: string | null }) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [sessionId, supabase]);
+  }, [sessionId, supabase, refreshTrigger]);
 
   if (!candidate) {
     return (

@@ -60,16 +60,16 @@ export function ChatArea({ sessionId, onComplete }: { sessionId: string | null, 
         message: userText
       });
 
+      const agentMsg = { session_id: sessionId, sender: "interviewer", content: apiResponse.reply || "Error: no reply" };
+      setMessages(prev => [...prev, agentMsg]);
+      await supabase.from("chat_messages").insert(agentMsg);
+
       if (apiResponse.done) {
         const agentMsg = { session_id: sessionId, sender: "interviewer", content: apiResponse.reply || "Thank you for your time. The interview is now complete." };
         setMessages(prev => [...prev, agentMsg]);
         await supabase.from("chat_messages").insert(agentMsg);
         // Backend handles scorecard creation, we just trigger complete
         onComplete();
-      } else {
-        const agentMsg = { session_id: sessionId, sender: "interviewer", content: apiResponse.reply || "Error: no reply" };
-        setMessages(prev => [...prev, agentMsg]);
-        await supabase.from("chat_messages").insert(agentMsg);
       }
     } catch (err) {
       console.error(err);
