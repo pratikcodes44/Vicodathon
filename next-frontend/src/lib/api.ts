@@ -5,16 +5,10 @@ export interface InterviewFeedback {
   next: string[];
 }
 
-/**
- * API base URL for the FastAPI backend.
- * 
- * In production (Netlify): Set NEXT_PUBLIC_API_URL env var to the Render backend URL
- * In development: Falls back to http://localhost:8000
- * 
- * IMPORTANT: NEXT_PUBLIC_* vars are inlined at BUILD TIME by Next.js.
- * They must be set in Netlify's Environment Variables BEFORE triggering a deploy.
- */
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// We use an empty string so fetch() uses relative paths (e.g. /api/interview)
+// Next.js rewrites (next.config.ts) will proxy this to the actual backend URL.
+// This completely avoids CORS issues.
+const API_BASE = "";
 
 export const sendInterviewTurn = async (_sessionId: string, payload: Record<string, unknown>) => {
   console.log("[API] Base URL:", API_BASE);
