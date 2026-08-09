@@ -47,7 +47,7 @@ async def interview(request: InterviewRequest):
     chat_res = supabase.table("chat_messages").select("*").eq("session_id", session_id).order("created_at").execute()
     messages = chat_res.data or []
 
-    MAX_TURNS = 4
+    MAX_TURNS = 10
     current_turn = session.get("current_turn", 1)
 
     # Check if we should finish
