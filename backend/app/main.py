@@ -83,6 +83,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.responses import JSONResponse
+from fastapi import Request
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    err_msg = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+    print(f"Global Exception: {err_msg}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error", "error_message": str(exc), "traceback": err_msg}
+    )
+
 # ---------------------------------------------------------------------------
 # Health Check Endpoint
 # ---------------------------------------------------------------------------
