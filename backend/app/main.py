@@ -76,8 +76,8 @@ app.add_middleware(
         "http://localhost:3001",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:3001",
-        "*",  # Allow Netlify and other deployed frontends
     ],
+    allow_origin_regex=r"https://.*\.netlify\.app",  # Match all Netlify deploy previews & production
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
