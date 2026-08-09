@@ -7,13 +7,16 @@ from __future__ import annotations
 import json
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, JSON
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-from app.core.config import DATABASE_PATH
+from app.core.config import DATABASE_PATH, DATABASE_URL
 
-# SQLite database setup
-engine = create_engine(
-    f"sqlite:///{DATABASE_PATH}",
-    connect_args={"check_same_thread": False}
-)
+if DATABASE_URL:
+    engine = create_engine(DATABASE_URL)
+else:
+    # SQLite fallback setup
+    engine = create_engine(
+        f"sqlite:///{DATABASE_PATH}",
+        connect_args={"check_same_thread": False}
+    )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

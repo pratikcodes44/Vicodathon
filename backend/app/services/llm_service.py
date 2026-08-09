@@ -324,21 +324,26 @@ async def generate_question(
     Generate the next interview question via LLM, with deterministic fallback.
     """
     system_prompt = (
-        "You are a friendly, expert technical interviewer. "
-        "Generate natural, concise interview questions. "
+        "You are a friendly, expert Senior Engineering Manager conducting a peer-to-peer technical discussion. "
+        "Your goal is to have an organic, engaging conversation while evaluating the candidate's skills. "
+        "STRICT RULES:\n"
+        "1. NEVER use robotic or scripted transitions like 'Moving on to our next topic', 'Let's start with', or 'Thank you for that answer'.\n"
+        "2. Ground your questions in the specific technical details of the current topic (Dataset Grounding).\n"
+        "3. Act like a human having a real conversation, responding naturally to the candidate's specific background or previous points.\n"
+        "4. If the candidate gives a weak or incomplete answer, your follow-up MUST reference specific missing technical details from the topic tools or objectives rather than asking generic clarification questions.\n"
         "You MUST respond with a JSON object matching the required schema."
     )
     # Context Isolation: Include ONLY the immediate last question and answer if it's a follow-up
     recent_context = ""
     if question_kind != QuestionKind.ANCHOR and last_question and last_answer:
-        recent_context = f"Previous Question: {last_question}\nCandidate Answer: {last_answer}\n"
+        recent_context = f"Previous Question you asked: {last_question}\nCandidate's Answer: {last_answer}\n"
 
     user_prompt = f"""
-Generate an interview question for a {candidate_role}.
+Candidate Background: {candidate_role}.
 
-You MUST ask a question about {title} (Day {day}). Do NOT ask about previous topics.
+You must organically weave in the following topic (Day {day}) into your next response/question.
 
-Topic Context (Day {day}):
+Current Topic Context:
 - Title: {title}
 - Objectives: {objectives}
 - Tools: {tools}
@@ -348,8 +353,10 @@ Question Kind: {question_kind.value}
 Follow-up Focus: {follow_up_focus or 'None'}
 
 {recent_context}
+Generate a natural, conversational response and your next question. Remember: NO robotic transitions.
+
 Respond as JSON with:
-- question_text (str, min 10 chars): the question to ask
+- question_text (str, min 10 chars): the conversational text and question to ask
 - curriculum_day (int): {day}
 - objective_focus (str): which objective this targets
 - difficulty (str): {difficulty.value}

@@ -5,9 +5,11 @@ export interface InterviewFeedback {
   next: string[];
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export const sendInterviewTurn = async (_sessionId: string, payload: Record<string, unknown>) => {
   try {
-    const response = await fetch("http://localhost:8000/api/interview", {
+    const response = await fetch(`${API_BASE}/api/interview`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

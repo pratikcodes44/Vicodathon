@@ -26,8 +26,11 @@ CURRICULUM_PATH = DATA_DIR / "curriculum.json"
 CANDIDATES_PATH = DATA_DIR / "candidates.json"
 FALLBACK_QUESTIONS_PATH = DATA_DIR / "fallback_questions.json"
 
-# SQLite database path (will be created on first run)
+# SQLite database path (will be created on first run if DATABASE_URL is not provided)
 DATABASE_PATH = APP_DIR / "interview_agent.db"
+
+# Supabase/PostgreSQL connection string
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 # ---------------------------------------------------------------------------
