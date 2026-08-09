@@ -7,3 +7,9 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://interview-agent-backend-4y92.onrender.com/api/:splat"
+  status = 200
+  force = true
